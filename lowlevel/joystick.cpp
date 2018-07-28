@@ -20,11 +20,11 @@
 
 Joystick::Joystick(void)
 {
-    pinMode(UP, INPUT);
-    pinMode(CENTER, INPUT);
-    pinMode(LEFT, INPUT);
-    pinMode(DOWN, INPUT);
-    pinMode(RIGHT, INPUT);
+  pinMode(UP, INPUT);
+  pinMode(CENTER, INPUT);
+  pinMode(LEFT, INPUT);
+  pinMode(DOWN, INPUT);
+  pinMode(RIGHT, INPUT);
 }
 
 Joystick::~Joystick(void)

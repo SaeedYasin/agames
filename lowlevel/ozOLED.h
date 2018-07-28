@@ -14,8 +14,8 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
 */
-#ifndef OzOLED_data_H
-#define OzOLED_data_H
+#ifndef __OzOLED_data_H
+#define __OzOLED_data_H
 
 #include <Arduino.h>
 
@@ -62,7 +62,8 @@
 #define Scroll_256Frames		0x03
 
 
-class OzOLED {
+class OzOLED
+{
 
 public:
 
@@ -101,7 +102,6 @@ public:
 	void setDeactivateScroll();
 
   	virtual void displayResult();
-
 };
 
 #endif

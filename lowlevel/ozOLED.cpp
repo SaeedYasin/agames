@@ -124,9 +124,8 @@ const byte BasicFont[][8] PROGMEM = {
 	{0x00,0x02,0x05,0x05,0x02,0x00,0x00,0x00} 
 };
 
-
 // Big numbers font, from 0 to 9 - 96 bytes each.
-const byte bigNumbers [][96] PROGMEM = {
+const byte bigNumbers [][96] PROGMEM ={
 {0x00, 0x00, 0x00, 0xC0, 0xE0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0,
 0xF0, 0xF0, 0xF0, 0xE0, 0xC0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0x01,
 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x00,
@@ -205,29 +204,26 @@ const byte bigNumbers [][96] PROGMEM = {
 0x00, 0x00, 0x01, 0x01, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}
 };
 
-
-
-
-
 // ====================== LOW LEVEL =========================
 
-void OzOLED::sendCommand(byte command){
+void OzOLED::sendCommand(byte command)
+{
 	Wire.beginTransmission(OLED_ADDRESS); // begin transmitting
 	Wire.write(OzOLED_COMMAND_MODE); //data mode
 	Wire.write(command);
 	Wire.endTransmission(); // stop transmitting
 }
 
-void OzOLED::sendData(byte data){
-	
+void OzOLED::sendData(byte data)
+{	
 	Wire.beginTransmission(OLED_ADDRESS); // begin transmitting
 	Wire.write(OzOLED_DATA_MODE); //data mode
 	Wire.write(data);
 	Wire.endTransmission(); // stop transmitting
 }
 
-void OzOLED::printChar(char C, byte X, byte Y){
-
+void OzOLED::printChar(char C, byte X, byte Y)
+{
 	if ( X < 128 )
 		setCursorXY(X, Y);
 
@@ -235,206 +231,175 @@ void OzOLED::printChar(char C, byte X, byte Y){
     if(C < 32 || C > 127)
 		C='*'; //star - indicate characters that can't be displayed
 
-	
-    for(byte i=0; i<8; i++) {
-	
+    for(byte i=0; i<8; i++)
+	{
        //read bytes from code memory
        sendData(pgm_read_byte(&BasicFont[C-32][i])); //font array starts at 0, ASCII starts at 32. Hence the translation
-	 
     }
 }
 
-void OzOLED::printString(const char *String, byte X, byte Y, byte numChar){
-
+void OzOLED::printString(const char *String, byte X, byte Y, byte numChar)
+{
 	if ( X < 128 )
 		setCursorXY(X, Y);
 
-	
 	byte count=0;
-    while(String[count] && count<numChar){
+    while(String[count] && count<numChar)
+	{
 		printChar(String[count++]);  
 	}
-
 }
 
-
-byte OzOLED::printNumber(long long_num, byte X, byte Y){
-
+byte OzOLED::printNumber(long long_num, byte X, byte Y)
+{
 	if ( X < 128 )
 		setCursorXY(X, Y);
-
 
 	byte char_buffer[10] = "";
 	byte i = 0;
 	byte f = 0; // number of characters
 
-	if (long_num < 0) {
-	
+	if (long_num < 0)
+	{
 		f++;
 		printChar('-');
 		long_num = -long_num;
-	
 	} 
-	else if (long_num == 0) {
-	
+	else if (long_num == 0)
+	{
 		f++;
 		printChar('0');
 		return f;
-	
 	} 
 
-	while (long_num > 0) {
-	
+	while (long_num > 0)
+	{
 		char_buffer[i++] = long_num % 10;
 		long_num /= 10;
-	
 	}
 
 	f += i;
-	for(; i > 0; i--) {
-
+	for(; i > 0; i--)
+	{
 		printChar('0'+ char_buffer[i - 1]);
-
 	}
 	
 	return f;
-
 }
 
-
-
-
-byte OzOLED::printNumber(float float_num, byte prec, byte X, byte Y){
-
+byte OzOLED::printNumber(float float_num, byte prec, byte X, byte Y)
+{
 	if ( X < 128 )
 		setCursorXY(X, Y);
 
-// prec - 6 maximum
+	// prec - 6 maximum
 
 	byte num_int = 0;
 	byte num_frac = 0;
 	byte num_extra = 0;
-	
+
 	long d = float_num; // get the integer part
 	float f = float_num - d; // get the fractional part
-	
-	
-	if (d == 0 && f < 0.0){
-	
+
+	if (d == 0 && f < 0.0)
+	{
 		printChar('-');
 		num_extra++;
 		printChar('0');
 		num_extra++;
 		f *= -1;
-		
 	}
-	else if (d < 0 && f < 0.0){
-	
+	else if (d < 0 && f < 0.0)
+	{
 		num_int = printNumber(d); // count how many digits in integer part
-		f *= -1;
-		
+		f *= -1;	
 	}
-	else{
-	
+	else
+	{
 		num_int = printNumber(d); // count how many digits in integer part
-	
 	}
-	
+
 	// only when fractional part > 0, we show decimal point
-	if (f > 0.0){
-	
+	if (f > 0.0)
+	{
 		printChar('.');
 		num_extra++;
-	
+
 		long f_shift = 1;
-		
+
 		if (num_int + prec > 8) 
 			prec = 8 - num_int;
-		
-		for (byte j=0; j<prec; j++){
+
+		for (byte j=0; j<prec; j++)
+		{
 			f_shift *= 10;
 		}
 
 		num_frac = printNumber((long)(f*f_shift)); // count how many digits in fractional part
-		
 	}
-	
-	return num_int + num_frac + num_extra;
 
+	return num_int + num_frac + num_extra;
 }
 
-
-
-void OzOLED::printBigNumber(const char *number, byte X, byte Y, byte numChar){
-// big number pixels: 24 x 32
-
- // Y - page
+void OzOLED::printBigNumber(const char *number, byte X, byte Y, byte numChar)
+{
+	// big number pixels: 24 x 32
+	// Y - page
 	byte column = 0;
 	byte count = 0;
 
-	while(number[count] && count<numChar){
-	
-	
+	while(number[count] && count<numChar)
+	{
 		setCursorXY(X, Y);
-		
-		for(byte i=0; i<96; i++) {
-		
+
+		for(byte i=0; i<96; i++)
+		{
 			// if character is not "0-9" or ':'
-			if(number[count] < 48 || number[count] > 58)	
+			if(number[count] < 48 || number[count] > 58)
 				sendData(0);
-			else 				
+			else
 				sendData(pgm_read_byte(&bigNumbers[number[count]-48][i]));
-			
-			
-			if(column >= 23){
+
+			if(column >= 23)
+			{
 				column = 0;
 				setCursorXY(X, ++Y);
 			}
 			else				
 				column++;
-
 		}
-		
+
 		count++;
-		
+
 		X = X + 3;
 		Y = Y - 4;
-		
-	
 	}
-
-	
-	
 }
 
-
-void OzOLED::drawBitmap(const byte *bitmaparray, byte X, byte Y, byte width, byte height){
-
-// max width = 16
-// max height = 8
-
+void OzOLED::drawBitmap(const byte *bitmaparray, byte X, byte Y, byte width, byte height)
+{
+	// max width = 16
+	// max height = 8
 	setCursorXY( X, Y );
 	
 	byte column = 0; 
-	for(int i=0; i<width*8*height; i++) {  
-
+	for(int i=0; i<width*8*height; i++)
+	{
 		sendData(pgm_read_byte(&bitmaparray[i]));
-		
-		if(++column == width*8) {
+
+		if(++column == width*8)
+		{
 			column = 0;
 			setCursorXY( X, ++Y );
-		} 
+		}
 	}
-
 }
-
-
 
 // =================== High Level ===========================
 
 // Constructor
-OzOLED::OzOLED(){
-	
+OzOLED::OzOLED()
+{	
 	Wire.begin();
 	//TWBR = 255; 				// reduce i2c speed by 4
 	// upgrade to 400KHz! (only use when your other i2c device support this speed)
@@ -465,35 +430,31 @@ OzOLED::OzOLED(){
 }
 
 // Desrtructor
-OzOLED::~OzOLED(){
-
+OzOLED::~OzOLED()
+{
 }
 
-void OzOLED::setCursorXY(byte X, byte Y){
+void OzOLED::setCursorXY(byte X, byte Y)
+{
 	// Y - 1 unit = 1 page (8 pixel rows)
 	// X - 1 unit = 8 pixel columns
 
     sendCommand(0x00 + (8*X & 0x0F)); 		//set column lower address
     sendCommand(0x10 + ((8*X>>4)&0x0F)); 	//set column higher address
 	sendCommand(0xB0 + Y); 					//set page address
-	
 }
 
-
-void OzOLED::clearDisplay()	{
-
-
-	for(byte page=0; page<8; page++) {	
-	
-		setCursorXY(0, page);     
-		for(byte column=0; column<128; column++){  //clear all columns
+void OzOLED::clearDisplay(void)
+{
+	for(byte page=0; page<8; page++)
+	{
+		setCursorXY(0, page);
+		for(byte column=0; column<128; column++) //clear all columns
+		{
 			sendData(0);    
 		}
-
 	}
-	
-	setCursorXY(0,0);  
-	
+	setCursorXY(0,0);
 }
 
 /*
@@ -508,77 +469,70 @@ void OzOLED::clearPage(byte page)	{
 }
 */
 
-
-void OzOLED::setInverseDisplay(){
-
+void OzOLED::setInverseDisplay(void)
+{
 	sendCommand(OzOLED_CMD_INVERSE_DISPLAY);
-	
 }
 
-void OzOLED::setNormalDisplay(){
-
+void OzOLED::setNormalDisplay(void)
+{
 	sendCommand(OzOLED_CMD_NORMAL_DISPLAY);
-	
 }
 
-void OzOLED::setPowerOff(){
-
-	sendCommand(OzOLED_CMD_DISPLAY_OFF);
-	
+void OzOLED::setPowerOff(void)
+{
+	sendCommand(OzOLED_CMD_DISPLAY_OFF);	
 }
 
-void OzOLED::setPowerOn(){
-
+void OzOLED::setPowerOn(void)
+{
 	sendCommand(OzOLED_CMD_DISPLAY_ON);
-	
 }
 
-void OzOLED::setBrightness(byte Brightness){
-
+void OzOLED::setBrightness(byte Brightness)
+{
 	sendCommand(OzOLED_CMD_SET_BRIGHTNESS);
 	sendCommand(Brightness);
-   
 }
 
-void OzOLED::setPageMode(){
+void OzOLED::setPageMode(void)
+{
 	addressingMode = PAGE_ADDRESSING;
 	sendCommand(0x20); 				//set addressing mode
 	sendCommand(PAGE_ADDRESSING); 	//set page addressing mode
 }
 
-void OzOLED::setHorizontalMode(){
+void OzOLED::setHorizontalMode(void)
+{
 	addressingMode = HORIZONTAL_ADDRESSING;
 	sendCommand(0x20); 				//set addressing mode
 	sendCommand(HORIZONTAL_ADDRESSING); 	//set page addressing mode
 }
 
-
 // startscrollright
 // Activate a right handed scroll for rows start through stop
 // Hint, the display is 16 rows tall. To scroll the whole display, run:
 // scrollRight(0x00, 0x0F)  - start - stop
-void OzOLED::scrollRight(byte start, byte end, byte speed){
-
+void OzOLED::scrollRight(byte start, byte end, byte speed)
+{
     sendCommand(OzOLED_RIGHT_SCROLL);  //Horizontal Scroll Setup
     sendCommand(0x00);	// dummy byte 
     sendCommand(start);	// start page address
     sendCommand(speed);	// set time interval between each scroll
     sendCommand(end);	// end page address
-	
+
     sendCommand(0x01);  
     sendCommand(0xFF);
-	
-    sendCommand(0x2f);  //active scrolling
-	
-}
 
+    sendCommand(0x2f);  //active scrolling
+}
 
 // startscrollleft
 // Activate a right handed scroll for rows start through stop
 // Hint, the display is 16 rows tall. To scroll the whole display, run:
 // display.scrollright(0x00, 0x0F)   - start - stop
-void OzOLED::scrollLeft(byte start, byte end, byte speed){
-
+void OzOLED::scrollLeft(byte start, byte end, byte speed)
+{
     sendCommand(OzOLED_LEFT_SCROLL);  //Horizontal Scroll Setup
     sendCommand(0x00);	// dummy byte
     sendCommand(start);	// start page address
@@ -589,30 +543,28 @@ void OzOLED::scrollLeft(byte start, byte end, byte speed){
     sendCommand(0xFF);  
 	
     sendCommand(0x2f);  //active scrolling
-	
 }
 
 // startscrolldiagright
 // Activate a diagonal scroll for rows start through stop
 // Hint, the display is 16 rows tall. To scroll the whole display, run:
 // display.scrollright(0x00, 0x0F) 
-void OzOLED::scrollDiagRight(){
-
+void OzOLED::scrollDiagRight(void)
+{
         sendCommand(OzOLED_SET_VERTICAL_SCROLL_AREA);        
         sendCommand(0X00);
         sendCommand(OzOLED_Max_Y);
         sendCommand(OzOLED_VERTICAL_RIGHT_SCROLL); //Vertical and Horizontal Scroll Setup
-        sendCommand(0X00); 	//dummy byte
-        sendCommand(0x00);	 //define page0 as startpage address
-        sendCommand(0X00);	//set time interval between each scroll ste as 6 frames
-        sendCommand(0x07);	//define page7 as endpage address
-        sendCommand(0X01);	//set vertical scrolling offset as 1 row
+        sendCommand(0X00); //dummy byte
+        sendCommand(0x00); //define page0 as startpage address
+        sendCommand(0X00); //set time interval between each scroll ste as 6 frames
+        sendCommand(0x07); //define page7 as endpage address
+        sendCommand(0X01); //set vertical scrolling offset as 1 row
         sendCommand(OzOLED_CMD_ACTIVATE_SCROLL); //active scrolling
-	
 }
 
-void OzOLED::scrollDiagLeft(){
-
+void OzOLED::scrollDiagLeft(void)
+{
         sendCommand(OzOLED_SET_VERTICAL_SCROLL_AREA);        
         sendCommand(0X00);
         sendCommand(OzOLED_Max_Y);
@@ -623,13 +575,10 @@ void OzOLED::scrollDiagLeft(){
         sendCommand(0x07);	//define page7 as endpage address
         sendCommand(0X01);	//set vertical scrolling offset as 1 row
         sendCommand(OzOLED_CMD_ACTIVATE_SCROLL); //active scrolling
-	
 }
 
-
-void OzOLED::setActivateScroll(byte direction, byte startPage, byte endPage, byte scrollSpeed){
-
-
+void OzOLED::setActivateScroll(byte direction, byte startPage, byte endPage, byte scrollSpeed)
+{
 /*
 This function is still not complete, we need more testing also.
 Use the following defines for 'direction' :
@@ -651,15 +600,15 @@ Use the following defines for 'scrollSpeed' :
  Scroll_256Frames
 
 */
-
-
-	if(direction == Scroll_Right) {
+	if(direction == Scroll_Right)
+	{
 	
 		//Scroll Right
 		sendCommand(0x26);
 		
 	}
-	else {
+	else
+	{
 	
 		//Scroll Left  
 		sendCommand(0x27);
@@ -679,11 +628,12 @@ Use the following defines for 'scrollSpeed' :
 	
 	}
 	*/
-	sendCommand(0x00);//dummy byte
+	sendCommand(0x00); //dummy byte
 	sendCommand(startPage);
 	sendCommand(scrollSpeed);	
-	sendCommand(endPage);		// for verticle scrolling, use 0x29 as command, endPage should = start page = 0
-	
+	sendCommand(endPage); // for verticle scrolling, use 0x29 as command, 
+						  // endPage should = start page = 0
+
 	/*
 	if(direction == Scroll_Up) {
 	
@@ -693,25 +643,14 @@ Use the following defines for 'scrollSpeed' :
 	*/
 
 	sendCommand(OzOLED_CMD_ACTIVATE_SCROLL);
-
 }
 
-void OzOLED::setDeactivateScroll(){
-
+void OzOLED::setDeactivateScroll(void)
+{
 	sendCommand(OzOLED_CMD_DEACTIVATE_SCROLL);
-
 }
 
-
-
-void OzOLED::displayResult(){
-  printString("Error",3,6,5);
+void OzOLED::displayResult(void)
+{
+  printString("Error", 3, 6, 5);
 }
-
-
-
-
-
-
-
-

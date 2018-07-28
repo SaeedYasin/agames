@@ -62,7 +62,6 @@ class Snake : public OzOLED
       byte speed;                // Speed of snake - can be from 5 (slowest) to 1 (highest)
       byte dir;                  // Can be UP, DOWN, LEFT, RIGHT only
       snakeCell *pSnakeHead;     // Where to position snake on LCD screen
-
 };
 
 #endif
