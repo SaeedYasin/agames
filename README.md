@@ -8,4 +8,4 @@ Hardware:
 ## Snake Game
 Control direction of snake using joystick and eat eggs. If only life could be that simple. :D
 
-[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/ztqpjjEvm6k/0.jpg)](https://www.youtube.com/watch?v=ztqpjjEvm6k)
+[![Snake Game Play](https://github.com/SaeedYasin/agames/blob/master/Snake%20Game%20Youtube%20Thumbnail.png?raw=true)](https://www.youtube.com/watch?v=ztqpjjEvm6k)
