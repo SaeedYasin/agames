@@ -1,5 +1,5 @@
-/*
-  egg.cpp - Used to create eggs on OzOLED.
+/********************************************************************
+  egg.h - Used to create eggs on OzOLED.
   2018 Copyright (c) electronicbeans.com  All right reserved.
  
   Author: Saeed Yasin
@@ -13,12 +13,12 @@
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
-*/
+********************************************************************/
 #ifndef __EGG_H
 #define __EGG_H
 
-#include "OzOLED.h"
-#include "Snake.h"
+#include "ozOLED.h"
+#include "snake.h"
 
 
 class Egg : public OzOLED 
@@ -29,15 +29,14 @@ class Egg : public OzOLED
     ~Egg();
     byte getEggCol();
     byte getEggRow();
-    void moveEgg(Snake*);
+    void move(Snake*);
 
-    friend byte checkForValidEgg(Egg*, Snake*);
+    friend bool isValidEgg(Egg*, Snake*);
 
   private:
-    byte x;     // Can have value from 0 to 15 only
-    byte y;     // Can have value from 0 to 7 only
-
-    void drawEgg(byte, byte);
+    Point position;
+    void findPosition(Snake*);
+    void drawEgg();
 };
 
 #endif

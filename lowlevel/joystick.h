@@ -1,5 +1,5 @@
-/*
-  joystick.cpp - Joystick Driver Library
+/********************************************************************
+  joystick.h - Joystick Driver Library
   2018 Copyright (c) electronicbeans.com  All right reserved.
  
   Author: Saeed Yasin
@@ -13,7 +13,7 @@
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
-*/
+********************************************************************/
 #ifndef __JOYSTICK_H
 #define __JOYSTICK_H
 
@@ -28,14 +28,14 @@
 
 class Joystick
 {
-  private:
-    byte scanIOs();
-
   public:
     Joystick();
     ~Joystick();
     byte getUserInput();
     byte waitForUserInput();
+
+  private:
+    byte scanIOs();
 };
 
 #endif

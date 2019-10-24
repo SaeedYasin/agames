@@ -1,4 +1,4 @@
-/*
+/********************************************************************
   OzOLED.cpp - 0.96' I2C 128x64 OLED Driver Library
   2014 Copyright (c) OscarLiang.net  All right reserved.
  
@@ -13,9 +13,8 @@
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
-*/
-
-#include "OzOLED.h"
+********************************************************************/
+#include "ozOLED.h"
 #include <Wire.h>
 #include <avr/pgmspace.h>
 

@@ -1,4 +1,4 @@
-/*
+/********************************************************************
   egg.cpp - Used to create eggs on OzOLED.
   2018 Copyright (c) electronicbeans.com  All right reserved.
  
@@ -13,52 +13,62 @@
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
-*/
-
+********************************************************************/
 #include "egg.h"
 
 
 // Friend function used to make sure not to create egg on the snake
-byte checkForValidEgg(Egg *pE, Snake *pS)
+bool isValidEgg(Egg* pE, Snake* pS)
 {
-  snakeCell *pCell = pS->pSnakeHead;
-  
+  bool isValid = true;
+  SnakeCell* pCell = pS->pSnakeHead;
+
   for(byte i=0;i<pS->length;i++)
   {
-    if(pE->x == pCell->col && pE->y == pCell->row)
-      return 1;
+    if(pE->position == pCell->position)
+    {
+      isValid = false;
+      break;
+    }
 
     pCell = pCell->preSnakeCell;
   }
 
-  return 0;
+  return isValid;
 }
 
 Egg::Egg(void)
 {  
 }
 
-Egg::Egg(Snake *pS)
+Egg::Egg(Snake* pS)
 {
-  do
-  {
-    x = random(16);
-    y = random(8);
-    
-  } while(checkForValidEgg(this, pS));
+  // Seed random value from ADC
+  randomSeed(analogRead(0));
 
-  drawEgg(x, y);
+  findPosition(pS);
+  drawEgg();
 }
 
 Egg::~Egg(void)
 {  
 }
 
-void Egg::drawEgg(byte col, byte row)
+void Egg::findPosition(Snake* pS)
 {
-  if(col < 16 && row < 8)
+  do
   {
-    setCursorXY(col, row);
+    position.x = random(DISP_MAX_X);
+    position.y = random(DISP_MAX_Y);
+
+  } while(!isValidEgg(this, pS));
+}
+
+void Egg::drawEgg(void)
+{
+  if(position < DISP_MAX_SIZE)
+  {
+    setCursorXY(position.x, position.y);
 
     // draw egg
     sendData(0x00); 
@@ -74,22 +84,16 @@ void Egg::drawEgg(byte col, byte row)
 
 byte Egg::getEggCol(void)
 {
-  return x;
+  return position.x;
 }
 
 byte Egg::getEggRow(void)
 {
-  return y;
+  return position.y;
 }
 
-void Egg::moveEgg(Snake* pS)
+void Egg::move(Snake* pS)
 {  
-  do
-  {
-    x = random(16);
-    y = random(8);
-    
-  } while(checkForValidEgg(this, pS));
-
-  drawEgg(x, y);
+  findPosition(pS);
+  drawEgg();
 }

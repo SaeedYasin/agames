@@ -1,4 +1,4 @@
-/*
+/********************************************************************
   snake.cpp - Used to create a snake on OzOLED.
   2018 Copyright (c) electronicbeans.com  All right reserved.
  
@@ -13,42 +13,37 @@
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
-*/
-
+********************************************************************/
 #include "Snake.h"
 
 
 Snake::Snake(void)
  : length(3), dir(RIGHT), speed(5)
 {
-  pSnakeHead = new snakeCell;
-  pSnakeHead->col = 3;
-  pSnakeHead->row = 3;
+  pSnakeHead = new SnakeCell;
+  pSnakeHead->position.x = 3;
+  pSnakeHead->position.y = 3;
 
-  snakeCell *pM = new snakeCell;
+  SnakeCell *pM = new SnakeCell;
   pSnakeHead->preSnakeCell = pM;
-  pM->col = 2;
-  pM->row = 3;
+  pM->position.x = 2;
+  pM->position.y = 3;
 
-  snakeCell *pT = new snakeCell;
+  SnakeCell *pT = new SnakeCell;
   pM->preSnakeCell = pT;
-  pT->col = 1;
-  pT->row = 3;
+  pT->position.x = 1;
+  pT->position.y = 3;
   pT->preSnakeCell = NULL;
 
-  // Clear LCD screen
-  Snake::clearDisplay();
-
-  // Draw snake on display
-  Snake::drawSnake();
+  clearDisplay();
+  drawSnake();
 }
 
 Snake::~Snake(void)
 {
-  snakeCell *pNextCell, *pCurrentCell;
+  SnakeCell *pNextCell, *pCurrentCell;
   pCurrentCell = pSnakeHead;
-  
-  // Delete all the snake cells
+
   for(byte i=0;i<length;i++)
   {
     pNextCell = pCurrentCell->preSnakeCell;
@@ -60,11 +55,11 @@ Snake::~Snake(void)
 
 void Snake::drawSnakeCell(byte col, byte row)
 {
-  if(col < 16 && row < 8) 
+  if(col < DISP_MAX_X && row < DISP_MAX_Y)
   {
     setCursorXY(col, row);
 
-    // Display snake cells
+    // Display snake cell lines
     sendData(0x00); 
     sendData(0x3c);
     sendData(0x7e);
@@ -78,112 +73,112 @@ void Snake::drawSnakeCell(byte col, byte row)
 
 void Snake::removeSnakeCell(byte col, byte row)
 {
-  if(col < 16 && row < 8)
+  if(col < DISP_MAX_X && row < DISP_MAX_Y)
   {
     setCursorXY(col, row);
 
-    for(byte i=0;i<8;i++)
+    for(byte i=0;i<DISP_POINT_SIZE;i++)
       sendData(0x00); 
   }  
 }
 
 void Snake::drawSnake(void)
 {
-  snakeCell *pCell = pSnakeHead;
+  SnakeCell *pCell = pSnakeHead;
     
   for(byte i=0;i<length;i++)
   {
-    drawSnakeCell(pCell->col,pCell->row);
+    drawSnakeCell(pCell->position.x, pCell->position.y);
     pCell = pCell->preSnakeCell;
   }
 }
 
 void Snake::removeSnake(void)
 {
-  snakeCell *pCell = pSnakeHead;
+  SnakeCell *pCell = pSnakeHead;
     
   for(byte i=0;i<length;i++)
   {
-    removeSnakeCell(pCell->col,pCell->row);
+    removeSnakeCell(pCell->position.x, pCell->position.y);
     pCell = pCell->preSnakeCell;
   }
 }
 
 // Return 0 for successful move, 1 for if snake gets out of bounds
-byte Snake::moveSnake(void)
+byte Snake::move(void)
 {
-  snakeCell *pTailCell = findSnakeTail();
+  SnakeCell *pTailCell = findSnakeTail();
 
   switch(dir)
   {
     case RIGHT:
-                if(((pSnakeHead->col)+1) < 16)
+                if(((pSnakeHead->position.x)+1) < DISP_MAX_X)
                 {
                   if(detectSnakeSelfCollision())
                     return 1;
 
-                  removeSnakeCell(pTailCell->col, pTailCell->row);
+                  removeSnakeCell(pTailCell->position.x, pTailCell->position.y);
 
-                  pTailCell->col = pSnakeHead->col + 1;
-                  pTailCell->row = pSnakeHead->row;
+                  pTailCell->position.x = pSnakeHead->position.x + 1;
+                  pTailCell->position.y = pSnakeHead->position.y;
                   pTailCell->preSnakeCell = pSnakeHead;
                   pSnakeHead = pTailCell;
                   
-                  drawSnakeCell(pSnakeHead->col, pSnakeHead->row);
+                  drawSnakeCell(pSnakeHead->position.x, pSnakeHead->position.y);
                 }
                 else
                     return 1;
                 break;
     case UP:
-                if((pSnakeHead->row) != 0)
+                if((pSnakeHead->position.y) != 0)
                 {
                   if(detectSnakeSelfCollision())
                     return 1;
 
-                  removeSnakeCell(pTailCell->col, pTailCell->row);
+                  removeSnakeCell(pTailCell->position.x, pTailCell->position.y);
 
-                  pTailCell->col = pSnakeHead->col;
-                  pTailCell->row = pSnakeHead->row - 1;
+                  pTailCell->position.x = pSnakeHead->position.x;
+                  pTailCell->position.y = pSnakeHead->position.y - 1;
                   pTailCell->preSnakeCell = pSnakeHead;
                   pSnakeHead = pTailCell;
 
-                  drawSnakeCell(pSnakeHead->col, pSnakeHead->row);
+                  drawSnakeCell(pSnakeHead->position.x, pSnakeHead->position.y);
                 }
                 else
                     return 1;
                 break;
     case LEFT:
-                if((pSnakeHead->col) != 0)
+                if((pSnakeHead->position.x) != 0)
                 {
                   if(detectSnakeSelfCollision())
                     return 1;
 
-                  removeSnakeCell(pTailCell->col, pTailCell->row);
+                  removeSnakeCell(pTailCell->position.x, pTailCell->position.y);
 
-                  pTailCell->col = pSnakeHead->col - 1;
-                  pTailCell->row = pSnakeHead->row;
+                  pTailCell->position.x = pSnakeHead->position.x - 1;
+                  pTailCell->position.y = pSnakeHead->position.y;
                   pTailCell->preSnakeCell = pSnakeHead;
                   pSnakeHead = pTailCell;
 
-                  drawSnakeCell(pSnakeHead->col, pSnakeHead->row);
+                  drawSnakeCell(pSnakeHead->position.x, pSnakeHead->position.y);
                 }
                 else
                     return 1;
                 break;
     case DOWN:
-                if(((pSnakeHead->row)+1) < 8)
+                if(((pSnakeHead->position.y)+1) < DISP_MAX_Y)
                 {
                   if(detectSnakeSelfCollision())
                     return 1;
 
-                  removeSnakeCell(pTailCell->col, pTailCell->row);
+                  removeSnakeCell(pTailCell->position.x, pTailCell->position.y);
 
-                  pTailCell->col = pSnakeHead->col;
-                  pTailCell->row = pSnakeHead->row + 1;
+                  pTailCell->position.x = pSnakeHead->position.x;
+                  pTailCell->position.y = pSnakeHead->position.y + 1;
                   pTailCell->preSnakeCell = pSnakeHead;
                   pSnakeHead = pTailCell;
 
-                  drawSnakeCell(pSnakeHead->col, pSnakeHead->row);
+                  drawSnakeCell(pSnakeHead->position.x, pSnakeHead->position.y);
                 }
                 else
                     return 1;
@@ -197,10 +192,10 @@ byte Snake::moveSnake(void)
 }
 
 // Find snake tail and return its pointer
-snakeCell* Snake::findSnakeTail(void)
+SnakeCell* Snake::findSnakeTail(void)
 {  
-  snakeCell *pHeadCell = pSnakeHead;
-  snakeCell *pTailCell;
+  SnakeCell *pHeadCell = pSnakeHead;
+  SnakeCell *pTailCell;
 
   for(byte i=0;i<(length-1);i++)
   {
@@ -225,14 +220,14 @@ void Snake::setSnakeDir(byte d)
 // return 0 if no collision detected, otherwise return 1
 byte Snake::detectSnakeSelfCollision()
 {
-  snakeCell *pCell = pSnakeHead->preSnakeCell;
+  SnakeCell *pCell = pSnakeHead->preSnakeCell;
 
   switch(dir)
   {
     case RIGHT:
                 for(byte i=0;i<(length-1);i++)
                 {
-                  if( (pSnakeHead->col+1) == pCell->col  &&  pSnakeHead->row == pCell->row )
+                  if( (pSnakeHead->position.x+1) == pCell->position.x  &&  pSnakeHead->position.y == pCell->position.y )
                     return 1;
 
                   pCell = pCell->preSnakeCell;
@@ -241,7 +236,7 @@ byte Snake::detectSnakeSelfCollision()
     case UP:
                 for(byte i=0;i<(length-1);i++)
                 {
-                  if( (pSnakeHead->row-1) == pCell->row  &&  pSnakeHead->col == pCell->col )
+                  if( (pSnakeHead->position.y-1) == pCell->position.y  &&  pSnakeHead->position.x == pCell->position.x )
                     return 1;
 
                   pCell = pCell->preSnakeCell;
@@ -250,7 +245,7 @@ byte Snake::detectSnakeSelfCollision()
     case LEFT:
                 for(byte i=0;i<(length-1);i++)
                 {
-                  if( (pSnakeHead->col-1) == pCell->col  &&  pSnakeHead->row == pCell->row )
+                  if( (pSnakeHead->position.x-1) == pCell->position.x  &&  pSnakeHead->position.y == pCell->position.y )
                     return 1;
 
                   pCell = pCell->preSnakeCell;
@@ -259,7 +254,7 @@ byte Snake::detectSnakeSelfCollision()
     case DOWN:
                 for(byte i=0;i<(length-1);i++)
                 {
-                  if( (pSnakeHead->row+1) == pCell->row  &&  pSnakeHead->col == pCell->col )
+                  if( (pSnakeHead->position.y+1) == pCell->position.y  &&  pSnakeHead->position.x == pCell->position.x )
                     return 1;
 
                   pCell = pCell->preSnakeCell;
@@ -310,17 +305,16 @@ void Snake::killSnakeAnimation(void)
     delay(150);
   }
 
-  // Clear LCD screen
-  Snake::clearDisplay();
+  clearDisplay();
 }
 
 void Snake::operator ++(int)
 {
-  snakeCell *pCell = new snakeCell;
-  snakeCell *pTail = findSnakeTail();
+  SnakeCell* pCell = new SnakeCell;
+  SnakeCell* pTail = findSnakeTail();
 
-  pCell->col = pTail->col;
-  pCell->row = pTail->row;
+  pCell->position.x = pTail->position.x;
+  pCell->position.y = pTail->position.y;
   
   pTail->preSnakeCell = pCell;
   this->length++;
@@ -359,10 +353,10 @@ void Snake::displayResult(void)
 
 byte Snake::getSnakeHeadCol(void)
 {
-  return pSnakeHead->col;
+  return pSnakeHead->position.x;
 }
 
 byte Snake::getSnakeHeadRow(void)
 {
-  return pSnakeHead->row;
+  return pSnakeHead->position.y;
 }

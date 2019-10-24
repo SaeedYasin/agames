@@ -1,4 +1,4 @@
-/*
+/********************************************************************
   joystick.cpp - Joystick Driver Library
   2018 Copyright (c) electronicbeans.com  All right reserved.
  
@@ -13,8 +13,7 @@
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
-*/
-
+********************************************************************/
 #include "joystick.h"
 
 
