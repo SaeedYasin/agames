@@ -1,9 +1,9 @@
 /********************************************************************
   OzOLED.h - 0.96' I2C 128x64 OLED Driver Library
   2014 Copyright (c) OscarLiang.net  All right reserved.
- 
+
   Author: Oscar Liang
-  
+
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
   License as published by the Free Software Foundation; either

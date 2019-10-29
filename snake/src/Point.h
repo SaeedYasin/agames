@@ -1,6 +1,6 @@
 /********************************************************************
-  Joystick.h - Joystick Driver Library
-  2018 Copyright (c) electronicbeans.com  All right reserved.
+  Point.h - Used to create a POINT on OzOLED.
+  2019 Copyright (c) electronicbeans.com  All right reserved.
 
   Author: Saeed Yasin
 
@@ -14,32 +14,30 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
 ********************************************************************/
-#ifndef __JOYSTICK_H
-#define __JOYSTICK_H
+#ifndef __POINT_H
+#define __POINT_H
 
-#include <Arduino.h>
+#include "OzOLED.h"
 
-// Define joystick pin constants
-enum JSPin
-{
+#define DISP_POINT_SIZE   8
+#define DISP_MAX_X        OzOLED_Max_X/DISP_POINT_SIZE
+#define DISP_MAX_Y        OzOLED_Max_Y/DISP_POINT_SIZE
 
-};
-#define UP      2
-#define CENTER  3
-#define LEFT    4
-#define DOWN    5
-#define RIGHT   6
-
-class Joystick
+class Point
 {
   public:
-    Joystick();
-    ~Joystick();
-    byte getUserInput();
-    byte waitForUserInput();
+    byte x;   // x can vary from 0 to 15 (DISP_MAX_X)
+    byte y;   // y can vary from 0 to 7  (DISP_MAX_Y)
 
-  private:
-    byte scanIOs();
+    Point();
+    ~Point();
+    Point(byte, byte);
+
+    void operator=(const Point&);
+    bool operator==(const Point&);
+    bool operator<(const Point&);
 };
+
+const Point DISP_MAX_SIZE(DISP_MAX_X, DISP_MAX_Y);
 
 #endif

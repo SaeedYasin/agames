@@ -1,9 +1,9 @@
 /********************************************************************
-  joystick.cpp - Joystick Driver Library
+  Joystick.cpp - Joystick Driver Library
   2018 Copyright (c) electronicbeans.com  All right reserved.
- 
+
   Author: Saeed Yasin
-  
+
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
   License as published by the Free Software Foundation; either
@@ -14,7 +14,7 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
 ********************************************************************/
-#include "joystick.h"
+#include "Joystick.h"
 
 
 Joystick::Joystick(void)

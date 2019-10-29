@@ -1,9 +1,9 @@
 /********************************************************************
-  egg.cpp - Used to create eggs on OzOLED.
+  Egg.cpp - Used to create eggs on OzOLED.
   2018 Copyright (c) electronicbeans.com  All right reserved.
- 
+
   Author: Saeed Yasin
-  
+
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
   License as published by the Free Software Foundation; either
@@ -14,7 +14,8 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
 ********************************************************************/
-#include "egg.h"
+#include "Egg.h"
+#include "Snake.h"
 
 
 // Friend function used to make sure not to create egg on the snake
@@ -23,7 +24,7 @@ bool isValidEgg(Egg* pE, Snake* pS)
   bool isValid = true;
   SnakeCell* pCell = pS->pSnakeHead;
 
-  for(byte i=0;i<pS->length;i++)
+  for(byte i=0;i<pS->m_length;i++)
   {
     if(pE->position == pCell->position)
     {
@@ -47,7 +48,7 @@ Egg::Egg(Snake* pS)
   randomSeed(analogRead(0));
 
   findPosition(pS);
-  drawEgg();
+  draw();
 }
 
 Egg::~Egg(void)
@@ -64,13 +65,13 @@ void Egg::findPosition(Snake* pS)
   } while(!isValidEgg(this, pS));
 }
 
-void Egg::drawEgg(void)
+void Egg::draw(void)
 {
   if(position < DISP_MAX_SIZE)
   {
     setCursorXY(position.x, position.y);
 
-    // draw egg
+    // Draw egg
     sendData(0x00); 
     sendData(0x18);
     sendData(0x3c);
@@ -82,18 +83,13 @@ void Egg::drawEgg(void)
   } 
 }
 
-byte Egg::getEggCol(void)
+Point Egg::getPosition(void)
 {
-  return position.x;
-}
-
-byte Egg::getEggRow(void)
-{
-  return position.y;
+  return position;
 }
 
 void Egg::move(Snake* pS)
 {  
   findPosition(pS);
-  drawEgg();
+  draw();
 }

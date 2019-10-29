@@ -1,6 +1,6 @@
 /********************************************************************
-  Joystick.h - Joystick Driver Library
-  2018 Copyright (c) electronicbeans.com  All right reserved.
+  Point.cpp - Used to create a POINT on OzOLED.
+  2019 Copyright (c) electronicbeans.com  All right reserved.
 
   Author: Saeed Yasin
 
@@ -14,32 +14,35 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
 ********************************************************************/
-#ifndef __JOYSTICK_H
-#define __JOYSTICK_H
+#include "Point.h"
 
-#include <Arduino.h>
 
-// Define joystick pin constants
-enum JSPin
+Point::Point(void)
+{  
+}
+
+Point::Point(byte x, byte y)
 {
+  this->x = x;
+  this->y = y;
+}
 
-};
-#define UP      2
-#define CENTER  3
-#define LEFT    4
-#define DOWN    5
-#define RIGHT   6
+Point::~Point(void)
+{  
+}
 
-class Joystick
+void Point::operator=(const Point& p)
 {
-  public:
-    Joystick();
-    ~Joystick();
-    byte getUserInput();
-    byte waitForUserInput();
+  this->x = p.x;
+  this->y = p.y;
+}
 
-  private:
-    byte scanIOs();
-};
+bool Point::operator==(const Point& p)
+{
+  return ((this->x == p.x) && (this->y == p.y));
+}
 
-#endif
+bool Point::operator<(const Point& p)
+{
+  return ((this->x < p.x) && (this->y < p.y));
+}

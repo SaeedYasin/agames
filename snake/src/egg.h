@@ -1,9 +1,9 @@
 /********************************************************************
-  egg.h - Used to create eggs on OzOLED.
+  Egg.h - Used to create eggs on OzOLED.
   2018 Copyright (c) electronicbeans.com  All right reserved.
- 
+
   Author: Saeed Yasin
-  
+
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
   License as published by the Free Software Foundation; either
@@ -17,9 +17,10 @@
 #ifndef __EGG_H
 #define __EGG_H
 
-#include "ozOLED.h"
-#include "snake.h"
+#include "OzOLED.h"
+#include "Point.h"
 
+class Snake;
 
 class Egg : public OzOLED 
 {
@@ -27,8 +28,7 @@ class Egg : public OzOLED
     Egg();
     Egg(Snake*);
     ~Egg();
-    byte getEggCol();
-    byte getEggRow();
+    Point getPosition(void);
     void move(Snake*);
 
     friend bool isValidEgg(Egg*, Snake*);
@@ -36,7 +36,7 @@ class Egg : public OzOLED
   private:
     Point position;
     void findPosition(Snake*);
-    void drawEgg();
+    void draw(void);
 };
 
 #endif

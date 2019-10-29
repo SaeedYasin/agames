@@ -1,9 +1,9 @@
 /********************************************************************
-  snake.ino - Snake mini game designed for LCD 0.96 inch display.
+  Snake.ino - Snake mini game designed for LCD 0.96 inch display.
   2018 Copyright (c) electronicbeans.com  All right reserved.
- 
+
   Author: Saeed Yasin
-  
+
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
   License as published by the Free Software Foundation; either
@@ -14,21 +14,26 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
 ********************************************************************/
-#include "src/snake.h"
-#include "src/egg.h"
+#include <Arduino.h>
+#include "src/Snake.h"
+#include "src/Joystick.h"
+#include "src/OzOLED.h"
+#include "src/Egg.h"
 
 // SYSLED - indicates system is working
 #define SYSLED   13
 
 // Globals for this game
-Snake * snake;
-Joystick * joyS;
-Egg * egg;
+OzOLED* display;
+Snake* snake;
+Joystick* joyS;
+Egg* egg;
 byte inputDir;
 
 
 void setup(void)
 {
+  display = new OzOLED();  // change to game display
   snake = new Snake;
   joyS = new Joystick;
   egg = new Egg(snake);
@@ -38,17 +43,17 @@ void setup(void)
 }
 
 void loop(void)
-{                            
+{
   digitalWrite(SYSLED, HIGH); // Toggle System LED
 
-  if( inputDir == 0 || inputDir == CENTER || inputDir == snake->getSnakeDir() )
+  if( inputDir == 0 || inputDir == CENTER || inputDir == snake->getDirection() )
   {
     for(byte s=0;s<25;s++)
     {
-      delay(snake->getSnakeSpeed());
+      delay(snake->getSpeed());
       inputDir = joyS->getUserInput();
   
-      if( (inputDir != 0) && (inputDir != CENTER) && (inputDir != snake->getSnakeDir()) )
+      if( (inputDir != 0) && (inputDir != CENTER) && (inputDir != snake->getDirection()) )
         break;
     }
   }
@@ -58,17 +63,14 @@ void loop(void)
     inputDir = joyS->getUserInput();
 
   // Check for valid input
-  if( (inputDir != 0) && (inputDir != CENTER) && (inputDir != snake->getSnakeDir()) )
+  if( (inputDir != 0) && (inputDir != CENTER) && (inputDir != snake->getDirection()) )
   {
-    snake->setSnakeDir(inputDir);
+    snake->setDirection(inputDir);
     inputDir = 0;
-  }  
+  }
 
-  // Move snake and check if snake is within bounds
-  if(snake->move())
+  if(!(snake->move()))
   {
-    snake->killSnakeAnimation();
-    snake->displayResult();
     delete snake;
     delete egg;
 
@@ -78,27 +80,23 @@ void loop(void)
     inputDir = 0;
   }
 
-  // Check if snake eats that egg
-  if( (egg->getEggCol() == snake->getSnakeHeadCol()) && 
-      (egg->getEggRow() == snake->getSnakeHeadRow()) )
+  // Check if snake eats the egg
+  if(egg->getPosition() == snake->getHeadPosition())
   {
     (*snake)++;
     egg->move(snake);
   }
 
-  // Adjust snake speed depending upon its length
-  snake->AdjustSnakeSpeed();
-
   digitalWrite(SYSLED, LOW); // Toggle System LED
 
-  if( inputDir == 0 || inputDir == CENTER || inputDir == snake->getSnakeDir() )
+  if( inputDir == 0 || inputDir == CENTER || inputDir == snake->getDirection() )
   {
     for(byte s=0;s<25;s++)
     {
-      delay(snake->getSnakeSpeed());
+      delay(snake->getSpeed());
       inputDir = joyS->getUserInput();
 
-      if( (inputDir != 0) && (inputDir != CENTER) && (inputDir != snake->getSnakeDir()) )
+      if( (inputDir != 0) && (inputDir != CENTER) && (inputDir != snake->getDirection()) )
         break;
     }
   }
