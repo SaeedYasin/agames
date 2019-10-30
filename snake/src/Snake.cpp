@@ -21,6 +21,8 @@
 Snake::Snake(void)
  : m_length(3), m_direction(RIGHT), m_speed(5)
 {
+  clearDisplay();
+
   pSnakeHead = new SnakeCell;
   pSnakeHead->position.x = 3;
   pSnakeHead->position.y = 3;
@@ -36,7 +38,6 @@ Snake::Snake(void)
   pT->position.y = 3;
   pT->preSnakeCell = NULL;
 
-  clearDisplay();
   draw();
 }
 

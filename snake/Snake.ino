@@ -33,7 +33,7 @@ byte inputDir;
 
 void setup(void)
 {
-  display = new OzOLED();  // change to game display
+  //display = new OzOLED();  // change to game display
   snake = new Snake;
   joyS = new Joystick;
   egg = new Egg(snake);
