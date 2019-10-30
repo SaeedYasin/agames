@@ -19,27 +19,29 @@
 
 #include <Arduino.h>
 
-// Define joystick pin constants
-enum JSPin
-{
 
-};
-#define UP      2
-#define CENTER  3
-#define LEFT    4
-#define DOWN    5
-#define RIGHT   6
+// Joystick HW pin defs
+// and allowed directions
+typedef enum Turn
+{
+  NONE   = 0,
+  UP     = 2,
+  CENTER = 3,
+  LEFT   = 4,
+  DOWN   = 5,
+  RIGHT  = 6
+} key_t;
 
 class Joystick
 {
   public:
     Joystick();
     ~Joystick();
-    byte getUserInput();
-    byte waitForUserInput();
+    key_t getUserInput();
+    key_t waitForUserInput();
 
   private:
-    byte scanIOs();
+    key_t scanIOs();
 };
 
 #endif

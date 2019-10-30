@@ -30,9 +30,9 @@ Joystick::~Joystick(void)
 {
 }
 
-byte Joystick::scanIOs(void)
+key_t Joystick::scanIOs(void)
 {
-  byte key = 0;
+  key_t key = NONE;
 
   if(digitalRead(UP)==LOW)
     key = UP;
@@ -48,16 +48,16 @@ byte Joystick::scanIOs(void)
   return key;
 }
 
-byte Joystick::getUserInput(void)
+key_t Joystick::getUserInput(void)
 {
   return scanIOs();
 }
 
-byte Joystick::waitForUserInput(void)
+key_t Joystick::waitForUserInput(void)
 {
-  byte key = 0;
+  key_t key = NONE;
 
-  while(key==0)
+  while(key==NONE)
     key = getUserInput();
 
   return key;

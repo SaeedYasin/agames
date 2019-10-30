@@ -52,7 +52,8 @@ Egg::Egg(Snake* pS)
 }
 
 Egg::~Egg(void)
-{  
+{
+  undraw();
 }
 
 void Egg::findPosition(Snake* pS)
@@ -81,6 +82,17 @@ void Egg::draw(void)
     sendData(0x18);
     sendData(0x00);
   } 
+}
+
+void Egg::undraw(void)
+{
+  if(position < DISP_MAX_SIZE)
+  {
+    setCursorXY(position.x, position.y);
+
+    for(byte i=0;i<DISP_POINT_SIZE;i++)
+      sendData(0x00);
+  }
 }
 
 Point Egg::getPosition(void)

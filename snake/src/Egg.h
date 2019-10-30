@@ -37,6 +37,7 @@ class Egg : public OzOLED
     Point position;
     void findPosition(Snake*);
     void draw(void);
+    void undraw(void);
 };
 
 #endif

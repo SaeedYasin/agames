@@ -26,8 +26,8 @@
 class Point
 {
   public:
-    byte x;   // x can vary from 0 to 15 (DISP_MAX_X)
-    byte y;   // y can vary from 0 to 7  (DISP_MAX_Y)
+    byte x;
+    byte y;
 
     Point();
     ~Point();

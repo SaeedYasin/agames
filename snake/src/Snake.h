@@ -19,15 +19,16 @@
 
 #include "OzOLED.h"
 #include "Point.h"
+#include "Joystick.h"
 
+
+class Egg;
 
 struct SnakeCell
 {
-  Point position; // Postiton coordinates on screen for snake cell
-  SnakeCell* preSnakeCell; // Pointer to the previous snake cell
+  Point position;
+  SnakeCell* preSnakeCell;
 };
-
-class Egg;
 
 class Snake : public OzOLED
 {  
@@ -35,26 +36,35 @@ class Snake : public OzOLED
     Snake();
     ~Snake();
     bool move(void);
-    void setDirection(byte);
-    byte getDirection(void);
+    void setDirection(Turn);
+    Turn getDirection(void);
     byte getSpeed(void);
-    byte getSnakeLength(void);
+    byte getLength(void);
     void operator ++(int);
     Point getHeadPosition(void);
 
     friend bool isValidEgg(Egg*, Snake*);
 
   private:
-    byte m_length;    // Can be from 3 to a maximum of 128
-    byte m_direction; // Can be UP, DOWN, LEFT, RIGHT only
-    byte m_speed;     // Speed of snake - can be from 5 (slowest) to 1 (highest)
+    enum speed_t
+    {
+      VERYFAST= 1,
+      FAST = 2,
+      NORMAL = 3,
+      SLOW = 4,
+      VERYSLOW = 5
+    };
+
+    byte m_length;
+    Turn m_direction;
+    speed_t m_speed;
 
     SnakeCell* pSnakeHead;
     bool selfCollision(void);
     void drawCell(Point);
-    void removeCell(Point);
+    void undrawCell(Point);
     void draw(void);
-    void remove(void);
+    void undraw(void);
     SnakeCell* findTail(void);
     void adjustSpeed(void);
     void animateDying(void);

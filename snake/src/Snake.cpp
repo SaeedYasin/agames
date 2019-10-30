@@ -19,10 +19,8 @@
 
 
 Snake::Snake(void)
- : m_length(3), m_direction(RIGHT), m_speed(5)
+ : m_length(3), m_direction(RIGHT), m_speed(VERYSLOW)
 {
-  clearDisplay();
-
   pSnakeHead = new SnakeCell;
   pSnakeHead->position.x = 3;
   pSnakeHead->position.y = 3;
@@ -43,6 +41,10 @@ Snake::Snake(void)
 
 Snake::~Snake(void)
 {
+  animateDying();
+  undraw();
+  displayResult();
+
   SnakeCell *pNextCell, *pCurrentCell;
   pCurrentCell = pSnakeHead;
 
@@ -73,15 +75,15 @@ void Snake::drawCell(Point p)
   }
 }
 
-void Snake::removeCell(Point p)
+void Snake::undrawCell(Point p)
 {
   if(p < DISP_MAX_SIZE)
   {
     setCursorXY(p.x, p.y);
 
     for(byte i=0;i<DISP_POINT_SIZE;i++)
-      sendData(0x00); 
-  }  
+      sendData(0x00);
+  }
 }
 
 void Snake::draw(void)
@@ -95,13 +97,13 @@ void Snake::draw(void)
   }
 }
 
-void Snake::remove(void)
+void Snake::undraw(void)
 {
   SnakeCell* pCell = pSnakeHead;
-    
+
   for(byte i=0;i<m_length;i++)
   {
-    removeCell(pCell->position);
+    undrawCell(pCell->position);
     pCell = pCell->preSnakeCell;
   }
 }
@@ -160,18 +162,13 @@ bool Snake::move(void)
   if(success)
   {
     SnakeCell* pTailCell = findTail();
-    removeCell(pTailCell->position);
+    undrawCell(pTailCell->position);
 
     pTailCell->position = newPosition;
     pTailCell->preSnakeCell = pSnakeHead;
     pSnakeHead = pTailCell;
 
     drawCell(pSnakeHead->position);
-  }
-  else
-  {
-    animateDying();
-    displayResult();
   }
 
   return success;
@@ -193,21 +190,19 @@ SnakeCell* Snake::findTail(void)
 
 bool Snake::selfCollision(void)
 {
-  bool collision = false;
   SnakeCell* pCell = pSnakeHead->preSnakeCell;
+  bool collision = false;
+  byte index = 0;
 
   switch(m_direction)
   {
     case RIGHT:
-      for(byte i=0;i<(m_length-1);i++)
+      for(index=0;index<(m_length-1);index++)
       {
         if((pSnakeHead->position.x+1) == pCell->position.x
          && pSnakeHead->position.y == pCell->position.y)
         {
-          if(i == 0)
-            reverse();
-          else
-            collision = true;
+          collision = true;
           break;
         }
 
@@ -216,15 +211,12 @@ bool Snake::selfCollision(void)
       break;
 
     case UP:
-      for(byte i=0;i<(m_length-1);i++)
+      for(index=0;index<(m_length-1);index++)
       {
         if((pSnakeHead->position.y-1) == pCell->position.y
          && pSnakeHead->position.x == pCell->position.x)
         {
-          if(i == 0)
-            reverse();
-          else
-            collision = true;
+          collision = true;
           break;
         }
 
@@ -233,15 +225,12 @@ bool Snake::selfCollision(void)
       break;
 
     case LEFT:
-      for(byte i=0;i<(m_length-1);i++)
+      for(index=0;index<(m_length-1);index++)
       {
         if((pSnakeHead->position.x-1) == pCell->position.x
          && pSnakeHead->position.y == pCell->position.y)
         {
-          if(i == 0)
-            reverse();
-          else
-            collision = true;
+          collision = true;
           break;
         }
 
@@ -250,15 +239,12 @@ bool Snake::selfCollision(void)
       break;
 
     case DOWN:
-      for(byte i=0;i<(m_length-1);i++)
+      for(index=0;index<(m_length-1);index++)
       {
         if((pSnakeHead->position.y+1) == pCell->position.y
          && pSnakeHead->position.x == pCell->position.x)
         {
-          if(i == 0)
-            reverse();
-          else
-            collision = true;
+          collision = true;
           break;
         }
 
@@ -268,6 +254,15 @@ bool Snake::selfCollision(void)
 
     default:
       break;
+  }
+
+  if(collision && index == 0)
+  {
+    // Reverse snake direction in the case snake head
+    // collided with the cell right behind snake head cell
+    // This move is allowed, so don't declare collision as true
+    collision = false;
+    reverse();
   }
 
   return collision;
@@ -288,20 +283,15 @@ void Snake::reverse(void)
     pcurrCell->preSnakeCell = ppreCell;
   }
 
-  if(pcurrCell->position.y > pSnakeHead->position.y)
-    m_direction = DOWN;
-  else if(pcurrCell->position.y < pSnakeHead->position.y)
-    m_direction = UP;
-
   pSnakeHead = pcurrCell;
 }
 
-byte Snake::getDirection(void)
+Turn Snake::getDirection(void)
 {
   return m_direction;
 }
 
-void Snake::setDirection(byte direction)
+void Snake::setDirection(Turn direction)
 {
   if(direction == RIGHT || direction == LEFT ||
      direction == UP    || direction == DOWN)
@@ -312,24 +302,24 @@ void Snake::setDirection(byte direction)
 
 byte Snake::getSpeed(void)
 {
-  return m_speed;
+  return static_cast<byte>(m_speed);
 }
 
 void Snake::adjustSpeed(void)
 {
   if(m_length<4)
-    m_speed = 5;
+    m_speed = VERYSLOW;
   else if(m_length>=4 && m_length<5)
-    m_speed = 4;
+    m_speed = SLOW;
   else if(m_length>=5 && m_length<8)
-    m_speed = 3;
+    m_speed = NORMAL;
   else if(m_length>=8 && m_length<15)
-    m_speed = 2;
+    m_speed = FAST;
   else if(m_length>=15)
-    m_speed = 1;
+    m_speed = VERYFAST;
 }
 
-byte Snake::getSnakeLength(void)
+byte Snake::getLength(void)
 {
   return m_length;
 }
@@ -350,21 +340,19 @@ void Snake::operator ++(int)
 
 void Snake::animateDying(void)
 {
-  // Animate snake dying
   for(byte i=0;i<4;i++)
   {
-    remove();
+    undraw();
     delay(150);
     draw();
     delay(150);
   }
-
-  clearDisplay();
 }
 
 void Snake::displayResult(void)
 {
-  char gScore = static_cast<char>(m_length);
+  byte length = getLength();
+  char gScore = static_cast<char>(length);
   gScore -= 3;
 
   if(gScore<10)

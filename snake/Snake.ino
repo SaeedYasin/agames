@@ -26,18 +26,23 @@
 // Globals for this game
 OzOLED* display;
 Snake* snake;
-Joystick* joyS;
+Joystick* joyStick;
 Egg* egg;
-byte inputDir;
+Turn inputDir;
 
 
 void setup(void)
 {
-  //display = new OzOLED();  // change to game display
+  // TODO
+  display = new OzOLED();
+  display->clearDisplay();
+  // change to game display / play ?
+  // add observer
+
   snake = new Snake;
-  joyS = new Joystick;
+  joyStick = new Joystick;
   egg = new Egg(snake);
-  inputDir = 0;
+  inputDir = NONE;
 
   pinMode(SYSLED, OUTPUT);
 }
@@ -46,27 +51,27 @@ void loop(void)
 {
   digitalWrite(SYSLED, HIGH); // Toggle System LED
 
-  if( inputDir == 0 || inputDir == CENTER || inputDir == snake->getDirection() )
+  if( inputDir == NONE || inputDir == CENTER || inputDir == snake->getDirection() )
   {
     for(byte s=0;s<25;s++)
     {
       delay(snake->getSpeed());
-      inputDir = joyS->getUserInput();
+      inputDir = joyStick->getUserInput();
   
-      if( (inputDir != 0) && (inputDir != CENTER) && (inputDir != snake->getDirection()) )
+      if( (inputDir != NONE) && (inputDir != CENTER) && (inputDir != snake->getDirection()) )
         break;
     }
   }
 
   // Check if user pressed any button
-  if(inputDir == 0)
-    inputDir = joyS->getUserInput();
+  if(inputDir == NONE)
+    inputDir = joyStick->getUserInput();
 
   // Check for valid input
-  if( (inputDir != 0) && (inputDir != CENTER) && (inputDir != snake->getDirection()) )
+  if( (inputDir != NONE) && (inputDir != CENTER) && (inputDir != snake->getDirection()) )
   {
     snake->setDirection(inputDir);
-    inputDir = 0;
+    inputDir = NONE;
   }
 
   if(!(snake->move()))
@@ -74,10 +79,11 @@ void loop(void)
     delete snake;
     delete egg;
 
-    joyS->waitForUserInput();
+    joyStick->waitForUserInput();
+    display->clearDisplay();
     snake = new Snake;
     egg = new Egg(snake);
-    inputDir = 0;
+    inputDir = NONE;
   }
 
   // Check if snake eats the egg
@@ -89,14 +95,14 @@ void loop(void)
 
   digitalWrite(SYSLED, LOW); // Toggle System LED
 
-  if( inputDir == 0 || inputDir == CENTER || inputDir == snake->getDirection() )
+  if( inputDir == NONE || inputDir == CENTER || inputDir == snake->getDirection() )
   {
     for(byte s=0;s<25;s++)
     {
       delay(snake->getSpeed());
-      inputDir = joyS->getUserInput();
+      inputDir = joyStick->getUserInput();
 
-      if( (inputDir != 0) && (inputDir != CENTER) && (inputDir != snake->getDirection()) )
+      if( (inputDir != NONE) && (inputDir != CENTER) && (inputDir != snake->getDirection()) )
         break;
     }
   }
