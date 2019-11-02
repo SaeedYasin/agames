@@ -42,11 +42,12 @@ Egg::Egg(void)
 {  
 }
 
-Egg::Egg(Snake* pS)
+Egg::Egg(DisplayInterface* display, Snake* pS)
 {
   // Seed random value from ADC
   randomSeed(analogRead(0));
 
+  m_display = display;
   findPosition(pS);
   draw();
 }
@@ -60,39 +61,22 @@ void Egg::findPosition(Snake* pS)
 {
   do
   {
-    position.x = random(DISP_MAX_X);
-    position.y = random(DISP_MAX_Y);
+    position.x = random(m_display->MAX_X());
+    position.y = random(m_display->MAX_Y());
 
   } while(!isValidEgg(this, pS));
 }
 
 void Egg::draw(void)
 {
-  if(position < DISP_MAX_SIZE)
-  {
-    setCursorXY(position.x, position.y);
-
-    // Draw egg
-    sendData(0x00); 
-    sendData(0x18);
-    sendData(0x3c);
-    sendData(0x7e);
-    sendData(0x7e);
-    sendData(0x3c);
-    sendData(0x18);
-    sendData(0x00);
-  } 
+  const Pixel eggPixel = {position, {0x00,0x18,0x3c,0x7e,0x7e,0x3c,0x18,0x00}};
+  m_display->printPixel(eggPixel);
 }
 
 void Egg::undraw(void)
 {
-  if(position < DISP_MAX_SIZE)
-  {
-    setCursorXY(position.x, position.y);
-
-    for(byte i=0;i<DISP_POINT_SIZE;i++)
-      sendData(0x00);
-  }
+  const Pixel clearPixel = {position, {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00}};
+  m_display->printPixel(clearPixel);
 }
 
 Point Egg::getPosition(void)

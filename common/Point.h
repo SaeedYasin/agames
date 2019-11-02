@@ -1,6 +1,6 @@
 /********************************************************************
-  Egg.h - Used to create eggs on OzOLED.
-  2018 Copyright (c) electronicbeans.com  All right reserved.
+  Point.h
+  2019 Copyright (c) electronicbeans.com  All right reserved.
 
   Author: Saeed Yasin
 
@@ -14,31 +14,25 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
 ********************************************************************/
-#ifndef __EGG_H
-#define __EGG_H
+#ifndef __POINT_H
+#define __POINT_H
 
-#include "DisplayInterface.h"
+#include <stdint.h>
 
-class Snake;
 
-class Egg
+class Point
 {
   public:
-    Egg();
-    Egg(DisplayInterface*, Snake*);
-    virtual ~Egg();
-    Point getPosition(void);
-    void move(Snake*);
+    uint8_t x;
+    uint8_t y;
 
-    friend bool isValidEgg(Egg*, Snake*);
+    Point();
+    ~Point();
+    Point(uint8_t, uint8_t);
 
-  private:
-    Point position;
-    DisplayInterface* m_display;
-
-    void findPosition(Snake*);
-    void draw(void);
-    void undraw(void);
+    void operator=(const Point&);
+    bool operator==(const Point&);
+    bool operator<(const Point&);
 };
 
 #endif

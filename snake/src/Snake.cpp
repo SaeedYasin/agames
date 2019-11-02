@@ -15,11 +15,10 @@
   Lesser General Public License for more details.
 ********************************************************************/
 #include "Snake.h"
-#include "Joystick.h"
 
 
-Snake::Snake(void)
- : m_length(3), m_direction(RIGHT), m_speed(VERYSLOW)
+Snake::Snake(DisplayInterface* display)
+ : m_length(3), m_direction(RIGHT), m_speed(VERYSLOW), m_display(NULL)
 {
   pSnakeHead = new SnakeCell;
   pSnakeHead->position.x = 3;
@@ -36,6 +35,7 @@ Snake::Snake(void)
   pT->position.y = 3;
   pT->preSnakeCell = NULL;
 
+  m_display = display;
   draw();
 }
 
@@ -43,7 +43,6 @@ Snake::~Snake(void)
 {
   animateDying();
   undraw();
-  displayResult();
 
   SnakeCell *pNextCell, *pCurrentCell;
   pCurrentCell = pSnakeHead;
@@ -57,33 +56,16 @@ Snake::~Snake(void)
   }
 }
 
-void Snake::drawCell(Point p)
+void Snake::drawCell(Point Pos)
 {
-  if(p < DISP_MAX_SIZE)
-  {
-    setCursorXY(p.x, p.y);
-
-    // Display snake cell lines
-    sendData(0x00); 
-    sendData(0x3c);
-    sendData(0x7e);
-    sendData(0x7e);
-    sendData(0x7e);
-    sendData(0x7e);
-    sendData(0x7e);
-    sendData(0x3c);
-  }
+  const Pixel snakePixel = {Pos, {0x00,0x3c,0x7e,0x7e,0x7e,0x7e,0x7e,0x3c}};
+  m_display->printPixel(snakePixel);
 }
 
-void Snake::undrawCell(Point p)
+void Snake::undrawCell(Point Pos)
 {
-  if(p < DISP_MAX_SIZE)
-  {
-    setCursorXY(p.x, p.y);
-
-    for(byte i=0;i<DISP_POINT_SIZE;i++)
-      sendData(0x00);
-  }
+  const Pixel clearPixel = {Pos, {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00}};
+  m_display->printPixel(clearPixel);
 }
 
 void Snake::draw(void)
@@ -118,7 +100,7 @@ bool Snake::move(void)
     switch(m_direction)
     {
       case RIGHT:
-        if(((pSnakeHead->position.x)+1) < DISP_MAX_X)
+        if(((pSnakeHead->position.x)+1) < m_display->MAX_X())
         {
           newPosition.x = pSnakeHead->position.x + 1;
           newPosition.y = pSnakeHead->position.y;
@@ -145,7 +127,7 @@ bool Snake::move(void)
         break;
 
       case DOWN:
-        if(((pSnakeHead->position.y)+1) < DISP_MAX_Y)
+        if(((pSnakeHead->position.y)+1) < m_display->MAX_Y())
         {
           newPosition.x = pSnakeHead->position.x;
           newPosition.y = pSnakeHead->position.y + 1;
@@ -319,7 +301,7 @@ void Snake::adjustSpeed(void)
     m_speed = VERYFAST;
 }
 
-byte Snake::getLength(void)
+uint8_t Snake::getLength(void)
 {
   return m_length;
 }
@@ -333,6 +315,8 @@ void Snake::operator ++(int)
   pCell->position.y = pTail->position.y;
   
   pTail->preSnakeCell = pCell;
+  pCell->preSnakeCell = NULL;
+
   m_length++;
 
   adjustSpeed();
@@ -347,38 +331,6 @@ void Snake::animateDying(void)
     draw();
     delay(150);
   }
-}
-
-void Snake::displayResult(void)
-{
-  byte length = getLength();
-  char gScore = static_cast<char>(length);
-  gScore -= 3;
-
-  if(gScore<10)
-  {
-    gScore += 0x30;
-    printBigNumber(&gScore,6,1,1);
-  }
-  else if(gScore<100)
-  {
-    char gS[2];
-    gS[0] = static_cast<char>(gScore/10) + 0x30;
-    gS[1] = static_cast<char>(gScore%10) + 0x30;
-  
-    printBigNumber(gS,4,1,2);
-  }
-  else
-  {
-    char gS[3];
-    gS[0] = static_cast<char>(gScore/100) + 0x30;
-    gS[1] = (static_cast<char>(gScore/10)) - (gS[0]-0x30)*10 + 0x30;
-    gS[2] = static_cast<char>(gScore%10) + 0x30;
-
-    printBigNumber(gS,3,1,3);
-  }
-
-  printString("Try again?",3,6,10);
 }
 
 Point Snake::getHeadPosition(void)

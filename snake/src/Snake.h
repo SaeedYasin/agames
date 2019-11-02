@@ -17,8 +17,7 @@
 #ifndef __SNAKE_H
 #define __SNAKE_H
 
-#include "OzOLED.h"
-#include "Point.h"
+#include "DisplayInterface.h"
 #include "Joystick.h"
 
 
@@ -30,16 +29,16 @@ struct SnakeCell
   SnakeCell* preSnakeCell;
 };
 
-class Snake : public OzOLED
-{  
+class Snake
+{
   public:
-    Snake();
-    ~Snake();
+    Snake(DisplayInterface*);
+    virtual ~Snake();
     bool move(void);
     void setDirection(Turn);
     Turn getDirection(void);
     byte getSpeed(void);
-    byte getLength(void);
+    uint8_t getLength(void);
     void operator ++(int);
     Point getHeadPosition(void);
 
@@ -55,9 +54,10 @@ class Snake : public OzOLED
       VERYSLOW = 5
     };
 
-    byte m_length;
+    uint8_t m_length;
     Turn m_direction;
     speed_t m_speed;
+    DisplayInterface* m_display;
 
     SnakeCell* pSnakeHead;
     bool selfCollision(void);
@@ -68,7 +68,6 @@ class Snake : public OzOLED
     SnakeCell* findTail(void);
     void adjustSpeed(void);
     void animateDying(void);
-    void displayResult(void);
     void reverse(void);
 };
 

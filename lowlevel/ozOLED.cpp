@@ -398,7 +398,13 @@ void OzOLED::drawBitmap(const byte *bitmaparray, byte X, byte Y, byte width, byt
 
 // Constructor
 OzOLED::OzOLED()
-{	
+{
+	// Set display dimensions
+	m_max_x = OzOLED_Max_X/DISP_POINT_SIZE;
+	m_max_y = OzOLED_Max_Y/DISP_POINT_SIZE;
+	m_max_size = Point(m_max_x, m_max_y);
+
+	// Setup I2C to communicate with display
 	Wire.begin();
 	//TWBR = 255; 				// reduce i2c speed by 4
 	// upgrade to 400KHz! (only use when your other i2c device support this speed)
@@ -410,7 +416,7 @@ OzOLED::OzOLED()
 		//Serial.println(TWBR, DEC);
 		//Serial.println(TWSR & 0x3, DEC);
 	}
-	
+
     setPowerOff(); 	//display off
     delay(10);
 
@@ -418,12 +424,12 @@ OzOLED::OzOLED()
 	sendCommand(0x14); // VCC
 	sendCommand(0xA0 | 0x1); //
 	sendCommand(0xC8); //	
-	
+
     setNormalDisplay();  //default Set Normal Display
 	setPageMode();	// default addressing mode
 	clearDisplay();
 	setCursorXY(0,0);
-	
+
     setPowerOn();	//display on
     delay(10); 
 }
@@ -649,7 +655,32 @@ void OzOLED::setDeactivateScroll(void)
 	sendCommand(OzOLED_CMD_DEACTIVATE_SCROLL);
 }
 
-void OzOLED::displayResult(void)
+// =================== Public Interface ===========================
+
+void OzOLED::clearScreen(void)
 {
-  printString("Error", 3, 6, 5);
+	clearDisplay();
+}
+
+void OzOLED::printPixel(const Pixel Pix)
+{
+	if(Pix.position < m_max_size)
+	{
+		setCursorXY(Pix.position.x, Pix.position.y);
+
+		for(byte i=0;i<DISP_POINT_SIZE;i++)
+		{
+			sendData(Pix.data[i]);
+		}
+	}
+}
+
+void OzOLED::printString(const char* String, uint8_t numChar, Point Pos)
+{
+	printString(String, Pos.x, Pos.y, numChar);
+}
+
+void OzOLED::printBigNumber(const char* number, uint8_t numChar, Point Pos)
+{
+	printBigNumber(number, Pos.x, Pos.y, numChar);
 }

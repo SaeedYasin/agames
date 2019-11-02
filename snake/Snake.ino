@@ -17,31 +17,28 @@
 #include <Arduino.h>
 #include "src/Snake.h"
 #include "src/Joystick.h"
+#include "src/DisplayInterface.h"
 #include "src/OzOLED.h"
 #include "src/Egg.h"
+
+void displayResult(void);
 
 // SYSLED - indicates system is working
 #define SYSLED   13
 
-// Globals for this game
-OzOLED* display;
+DisplayInterface* display;
 Snake* snake;
 Joystick* joyStick;
 Egg* egg;
 Turn inputDir;
 
-
 void setup(void)
 {
-  // TODO
-  display = new OzOLED();
-  display->clearDisplay();
-  // change to game display / play ?
-  // add observer
-
-  snake = new Snake;
   joyStick = new Joystick;
-  egg = new Egg(snake);
+  display = new OzOLED();
+
+  snake = new Snake(display);
+  egg = new Egg(display, snake);
   inputDir = NONE;
 
   pinMode(SYSLED, OUTPUT);
@@ -76,13 +73,15 @@ void loop(void)
 
   if(!(snake->move()))
   {
+    uint8_t snakeLength = snake->getLength();
     delete snake;
     delete egg;
 
+    displayResult(snakeLength);
     joyStick->waitForUserInput();
-    display->clearDisplay();
-    snake = new Snake;
-    egg = new Egg(snake);
+    display->clearScreen();
+    snake = new Snake(display);
+    egg = new Egg(display, snake);
     inputDir = NONE;
   }
 
@@ -106,4 +105,35 @@ void loop(void)
         break;
     }
   }
+}
+
+void displayResult(uint8_t length)
+{
+  char gScore = static_cast<char>(length);
+  gScore -= 3;
+
+  if(gScore<10)
+  {
+    gScore += 0x30;
+    display->printBigNumber(&gScore,1,Point(6,1));
+  }
+  else if(gScore<100)
+  {
+    char gS[2];
+    gS[0] = static_cast<char>(gScore/10) + 0x30;
+    gS[1] = static_cast<char>(gScore%10) + 0x30;
+
+    display->printBigNumber(gS,2,Point(4,1));
+  }
+  else
+  {
+    char gS[3];
+    gS[0] = static_cast<char>(gScore/100) + 0x30;
+    gS[1] = (static_cast<char>(gScore/10)) - (gS[0]-0x30)*10 + 0x30;
+    gS[2] = static_cast<char>(gScore%10) + 0x30;
+
+    display->printBigNumber(gS,3,Point(1,3));
+  }
+
+  display->printString("Try again?",10,Point(3,6));
 }

@@ -1,6 +1,6 @@
 /********************************************************************
-  Egg.h - Used to create eggs on OzOLED.
-  2018 Copyright (c) electronicbeans.com  All right reserved.
+  DisplayInterface.cpp
+  2019 Copyright (c) electronicbeans.com  All right reserved.
 
   Author: Saeed Yasin
 
@@ -14,31 +14,28 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
 ********************************************************************/
-#ifndef __EGG_H
-#define __EGG_H
-
 #include "DisplayInterface.h"
 
-class Snake;
 
-class Egg
+DisplayInterface::DisplayInterface(void)
 {
-  public:
-    Egg();
-    Egg(DisplayInterface*, Snake*);
-    virtual ~Egg();
-    Point getPosition(void);
-    void move(Snake*);
+}
 
-    friend bool isValidEgg(Egg*, Snake*);
+DisplayInterface::~DisplayInterface(void)
+{
+}
 
-  private:
-    Point position;
-    DisplayInterface* m_display;
+const uint8_t DisplayInterface::MAX_X(void)
+{
+  return m_max_x;
+}
 
-    void findPosition(Snake*);
-    void draw(void);
-    void undraw(void);
-};
+const uint8_t DisplayInterface::MAX_Y(void)
+{
+  return m_max_y;
+}
 
-#endif
+const Point DisplayInterface::MAX_SIZE(void)
+{
+  return m_max_size;
+}

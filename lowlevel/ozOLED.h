@@ -18,6 +18,8 @@
 #define __OzOLED_data_H
 
 #include <Arduino.h>
+#include "DisplayInterface.h"
+
 
 #define OzOLED_Max_X					128	//128 Pixels
 #define OzOLED_Max_Y					64	//64  Pixels
@@ -62,16 +64,17 @@
 #define Scroll_256Frames		0x03
 
 
-class OzOLED
+class OzOLED : public DisplayInterface
 {
-
 public:
-
-	byte addressingMode;
-
 	OzOLED();
-	~OzOLED();
+	virtual ~OzOLED();
+    void clearScreen(void);
+    void printPixel(const Pixel Pix);
+	void printString(const char* String, uint8_t numChar, Point Pos);
+	void printBigNumber(const char* number, uint8_t numChar, Point Pos);
 
+private:
 	void sendCommand(byte command);
 	void sendData(byte Data);
 
@@ -81,11 +84,11 @@ public:
 	byte printNumber(float float_num, byte prec=6, byte Y=255, byte numChar=255);
 	void printBigNumber(const char *number, byte column=0, byte page=0, byte numChar=255); 
 	void drawBitmap(const byte *bitmaparray, byte X, byte Y, byte width, byte height);
-	
+
 	void setCursorXY(byte Column, byte Row);
 	void clearDisplay();
 	//void clearPage(byte);
-	
+
 	void setNormalDisplay();
 	void setInverseDisplay();
 	void setPowerOff();
@@ -93,7 +96,7 @@ public:
 	void setPageMode();
 	void setHorizontalMode();
 	void setBrightness(byte);
-	
+
 	void scrollRight(byte, byte, byte);
 	void scrollLeft(byte, byte, byte);
 	void scrollDiagRight();
@@ -101,7 +104,7 @@ public:
 	void setActivateScroll(byte, byte, byte, byte);
 	void setDeactivateScroll();
 
-  	virtual void displayResult();
+	byte addressingMode;
 };
 
 #endif
