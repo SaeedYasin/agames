@@ -18,7 +18,6 @@
 #define __SNAKE_H
 
 #include "DisplayInterface.h"
-#include "Joystick.h"
 #include <stdint.h>
 #include "types.h"
 
