@@ -32,7 +32,7 @@ Joystick::~Joystick(void)
 {
 }
 
-void Joystick::setTimer1Frequency(byte freq)
+void Joystick::setTimer1Frequency(uint8_t freq)
 {
   cli(); // stop interrupts
 
@@ -53,9 +53,9 @@ ISR(TIMER1_COMPA_vect)
   test = 1;
 }
 
-key_t Joystick::scanIOs(void)
+dir_t Joystick::scanIOs(void)
 {
-  key_t key = NONE;
+  dir_t key = NONE;
 
   if (digitalRead(UP) == LOW)
     key = UP;
@@ -71,7 +71,7 @@ key_t Joystick::scanIOs(void)
   return key;
 }
 
-key_t Joystick::getUserInput(void)
+dir_t Joystick::getUserInput(void)
 {
   if (test == 1)
     return scanIOs();
@@ -79,9 +79,9 @@ key_t Joystick::getUserInput(void)
     return NONE;
 }
 
-key_t Joystick::waitForUserInput(void)
+dir_t Joystick::waitForUserInput(void)
 {
-  key_t key = NONE;
+  dir_t key = NONE;
 
   while (key == NONE)
     key = getUserInput();

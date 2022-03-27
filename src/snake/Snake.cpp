@@ -281,12 +281,12 @@ void Snake::reverse(void)
   pSnakeHead = pcurrCell;
 }
 
-Turn Snake::getDirection(void)
+dir_t Snake::getDirection(void)
 {
   return m_direction;
 }
 
-void Snake::setDirection(Turn direction)
+void Snake::setDirection(dir_t direction)
 {
   if (direction == RIGHT || direction == LEFT ||
       direction == UP || direction == DOWN)

@@ -21,7 +21,7 @@
 
 // Joystick HW pin definitions
 // and allowed directions
-typedef enum Turn
+typedef enum Direction
 {
   NONE = 0,
   UP = 2,
@@ -29,18 +29,18 @@ typedef enum Turn
   LEFT = 4,
   DOWN = 5,
   RIGHT = 6
-} key_t;
+} dir_t;
 
 class Joystick
 {
 public:
   Joystick();
   ~Joystick();
-  key_t getUserInput();
-  key_t waitForUserInput();
+  dir_t getUserInput();
+  dir_t waitForUserInput();
 
 private:
-  key_t scanIOs();
+  dir_t scanIOs();
   void setTimer1Frequency(uint8_t);
 };
 

@@ -27,7 +27,7 @@ DisplayInterface *display;
 Snake *snake;
 Joystick *joyStick;
 Egg *egg;
-Turn inputDir;
+dir_t inputDir;
 
 void setup(void)
 {

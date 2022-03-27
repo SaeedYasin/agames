@@ -35,8 +35,8 @@ public:
   Snake(DisplayInterface *);
   virtual ~Snake();
   bool move(void);
-  void setDirection(Turn);
-  Turn getDirection(void);
+  void setDirection(dir_t);
+  dir_t getDirection(void);
   uint8_t getSpeed(void);
   uint8_t getLength(void);
   void operator++(int);
@@ -55,7 +55,7 @@ private:
   };
 
   uint8_t m_length;
-  Turn m_direction;
+  dir_t m_direction;
   speed_t m_speed;
   DisplayInterface *m_display;
 
