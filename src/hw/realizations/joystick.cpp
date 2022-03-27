@@ -19,11 +19,11 @@
 
 Joystick::Joystick(void)
 {
-  pinMode(UP, INPUT);
-  pinMode(CENTER, INPUT);
-  pinMode(LEFT, INPUT);
-  pinMode(DOWN, INPUT);
-  pinMode(RIGHT, INPUT);
+  pinMode(UP_PIN, INPUT);
+  pinMode(CENTER_PIN, INPUT);
+  pinMode(LEFT_PIN, INPUT);
+  pinMode(DOWN_PIN, INPUT);
+  pinMode(RIGHT_PIN, INPUT);
 
   setTimer1Frequency(5);
 }
@@ -57,15 +57,15 @@ dir_t Joystick::scanIOs(void)
 {
   dir_t key = NONE;
 
-  if (digitalRead(UP) == LOW)
+  if (digitalRead(UP_PIN) == LOW)
     key = UP;
-  else if (digitalRead(CENTER) == LOW)
+  else if (digitalRead(CENTER_PIN) == LOW)
     key = CENTER;
-  else if (digitalRead(LEFT) == LOW)
+  else if (digitalRead(LEFT_PIN) == LOW)
     key = LEFT;
-  else if (digitalRead(DOWN) == LOW)
+  else if (digitalRead(DOWN_PIN) == LOW)
     key = DOWN;
-  else if (digitalRead(RIGHT) == LOW)
+  else if (digitalRead(RIGHT_PIN) == LOW)
     key = RIGHT;
 
   return key;
