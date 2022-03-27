@@ -1,6 +1,6 @@
 /********************************************************************
-  DisplayInterface.cpp
-  2019 Copyright (c) electronicbeans.com  All right reserved.
+  2022 Copyright (c) saeedsolutions.blogspot.com
+  All right reserved.
 
   Author: Saeed Yasin
 
@@ -15,7 +15,6 @@
   Lesser General Public License for more details.
 ********************************************************************/
 #include "DisplayInterface.h"
-
 
 DisplayInterface::DisplayInterface(void)
 {

@@ -1,6 +1,6 @@
 /********************************************************************
-  Joystick.h - Joystick Driver Library
-  2018 Copyright (c) electronicbeans.com  All right reserved.
+  2022 Copyright (c) saeedsolutions.blogspot.com
+  All right reserved.
 
   Author: Saeed Yasin
 
@@ -17,31 +17,31 @@
 #ifndef __JOYSTICK_H
 #define __JOYSTICK_H
 
-#include <Arduino.h>
+#include <stdint.h>
 
-
-// Joystick HW pin defs
+// Joystick HW pin definitions
 // and allowed directions
 typedef enum Turn
 {
-  NONE   = 0,
-  UP     = 2,
+  NONE = 0,
+  UP = 2,
   CENTER = 3,
-  LEFT   = 4,
-  DOWN   = 5,
-  RIGHT  = 6
+  LEFT = 4,
+  DOWN = 5,
+  RIGHT = 6
 } key_t;
 
 class Joystick
 {
-  public:
-    Joystick();
-    ~Joystick();
-    key_t getUserInput();
-    key_t waitForUserInput();
+public:
+  Joystick();
+  ~Joystick();
+  key_t getUserInput();
+  key_t waitForUserInput();
 
-  private:
-    key_t scanIOs();
+private:
+  key_t scanIOs();
+  void setTimer1Frequency(uint8_t);
 };
 
 #endif

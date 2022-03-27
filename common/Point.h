@@ -1,6 +1,6 @@
 /********************************************************************
-  Point.h
-  2019 Copyright (c) electronicbeans.com  All right reserved.
+  2022 Copyright (c) saeedsolutions.blogspot.com
+  All right reserved.
 
   Author: Saeed Yasin
 
@@ -19,20 +19,20 @@
 
 #include <stdint.h>
 
-
 class Point
 {
-  public:
-    uint8_t x;
-    uint8_t y;
+public:
+  uint8_t x;
+  uint8_t y;
 
-    Point();
-    ~Point();
-    Point(uint8_t, uint8_t);
+  Point();
+  ~Point();
+  Point(uint8_t, uint8_t);
 
-    void operator=(const Point&);
-    bool operator==(const Point&);
-    bool operator<(const Point&);
+  void operator=(const Point &);
+  bool operator==(const Point &) const;
+  bool operator!=(const Point &) const;
+  bool operator<(const Point &) const;
 };
 
 #endif

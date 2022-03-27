@@ -1,12 +1,20 @@
 # agames :video_game:
-Arduino Games using OOP C/C++ 
+
+Arduino Games using OOP C/C++
 
 Hardware:
-  Arduino nano with 0.96 inch OLED display along with small joystick.
+Arduino nano with 0.96 inch OLED display along with small joystick.
 ![alt text](https://github.com/SaeedYasin/agames/blob/master/SnakeGame.gif?raw=true)
 
+Use the command, `ls /dev/* | grep cu.usb` to detect the port for arduino programming.
+
 ## Snake Game :snake:
+
 Control direction of snake using joystick and eat eggs. If only life could be that simple. :satisfied:
+
+## Snake Game
+
+Control direction of snake using joystick and eat eggs. If only life could be that simple. :D
 
 Watch youtube video of sample game play below.
 

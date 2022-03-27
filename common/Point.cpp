@@ -1,6 +1,6 @@
 /********************************************************************
-  Point.cpp
-  2019 Copyright (c) electronicbeans.com  All right reserved.
+  2022 Copyright (c) saeedsolutions.blogspot.com
+  All right reserved.
 
   Author: Saeed Yasin
 
@@ -16,9 +16,8 @@
 ********************************************************************/
 #include "Point.h"
 
-
 Point::Point(void)
-{  
+{
 }
 
 Point::Point(uint8_t x, uint8_t y)
@@ -28,21 +27,26 @@ Point::Point(uint8_t x, uint8_t y)
 }
 
 Point::~Point(void)
-{  
+{
 }
 
-void Point::operator=(const Point& p)
+void Point::operator=(const Point &p)
 {
   this->x = p.x;
   this->y = p.y;
 }
 
-bool Point::operator==(const Point& p)
+bool Point::operator==(const Point &p) const
 {
   return ((this->x == p.x) && (this->y == p.y));
 }
 
-bool Point::operator<(const Point& p)
+bool Point::operator!=(const Point &p) const
+{
+  return ((this->x != p.x) || (this->y != p.y));
+}
+
+bool Point::operator<(const Point &p) const
 {
   return ((this->x < p.x) && (this->y < p.y));
 }

@@ -1,6 +1,6 @@
 /********************************************************************
-  Joystick.cpp - Joystick Driver Library
-  2018 Copyright (c) electronicbeans.com  All right reserved.
+  2022 Copyright (c) saeedsolutions.blogspot.com
+  All right reserved.
 
   Author: Saeed Yasin
 
@@ -15,7 +15,7 @@
   Lesser General Public License for more details.
 ********************************************************************/
 #include "Joystick.h"
-
+#include <Arduino.h>
 
 Joystick::Joystick(void)
 {
@@ -24,25 +24,48 @@ Joystick::Joystick(void)
   pinMode(LEFT, INPUT);
   pinMode(DOWN, INPUT);
   pinMode(RIGHT, INPUT);
+
+  setTimer1Frequency(5);
 }
 
 Joystick::~Joystick(void)
 {
 }
 
+void Joystick::setTimer1Frequency(byte freq)
+{
+  cli(); // stop interrupts
+
+  TCCR1A = 0;
+  TCCR1B = 0;
+  TCNT1 = 0;
+  OCR1A = (15625 / freq) - 1; // (16*10^6) / (freq*1024) - 1 (must be <65536)
+  TCCR1B |= (1 << WGM12);
+  TCCR1B |= (1 << CS12) | (1 << CS10);
+  TIMSK1 |= (1 << OCIE1A);
+
+  sei(); // allow interrupts
+}
+
+byte test = 0;
+ISR(TIMER1_COMPA_vect)
+{
+  test = 1;
+}
+
 key_t Joystick::scanIOs(void)
 {
   key_t key = NONE;
 
-  if(digitalRead(UP)==LOW)
+  if (digitalRead(UP) == LOW)
     key = UP;
-  else if(digitalRead(CENTER)==LOW)
+  else if (digitalRead(CENTER) == LOW)
     key = CENTER;
-  else if(digitalRead(LEFT)==LOW)
+  else if (digitalRead(LEFT) == LOW)
     key = LEFT;
-  else if(digitalRead(DOWN)==LOW)
+  else if (digitalRead(DOWN) == LOW)
     key = DOWN;
-  else if(digitalRead(RIGHT)==LOW)
+  else if (digitalRead(RIGHT) == LOW)
     key = RIGHT;
 
   return key;
@@ -50,14 +73,17 @@ key_t Joystick::scanIOs(void)
 
 key_t Joystick::getUserInput(void)
 {
-  return scanIOs();
+  if (test == 1)
+    return scanIOs();
+  else
+    return NONE;
 }
 
 key_t Joystick::waitForUserInput(void)
 {
   key_t key = NONE;
 
-  while(key==NONE)
+  while (key == NONE)
     key = getUserInput();
 
   return key;

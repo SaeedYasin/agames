@@ -1,6 +1,6 @@
 /********************************************************************
-  Snake.ino - Snake mini game designed for LCD 0.96 inch display.
-  2018 Copyright (c) electronicbeans.com  All right reserved.
+  2022 Copyright (c) saeedsolutions.blogspot.com
+  All right reserved.
 
   Author: Saeed Yasin
 
@@ -23,13 +23,10 @@
 
 void displayResult(void);
 
-// SYSLED - indicates system is working
-#define SYSLED   13
-
-DisplayInterface* display;
-Snake* snake;
-Joystick* joyStick;
-Egg* egg;
+DisplayInterface *display;
+Snake *snake;
+Joystick *joyStick;
+Egg *egg;
 Turn inputDir;
 
 void setup(void)
@@ -41,37 +38,39 @@ void setup(void)
   egg = new Egg(display, snake);
   inputDir = NONE;
 
-  pinMode(SYSLED, OUTPUT);
+  // SYSLED - indicates system is working
+  //#define SYSLED   13
+  // pinMode(SYSLED, OUTPUT);
+  // digitalWrite(SYSLED, HIGH); // Toggle System LED
+  // digitalWrite(SYSLED, LOW); // Toggle System LED
 }
 
 void loop(void)
 {
-  digitalWrite(SYSLED, HIGH); // Toggle System LED
-
-  if( inputDir == NONE || inputDir == CENTER || inputDir == snake->getDirection() )
+  if (inputDir == NONE || inputDir == CENTER || inputDir == snake->getDirection())
   {
-    for(byte s=0;s<25;s++)
+    for (byte s = 0; s < 25; s++)
     {
       delay(snake->getSpeed());
       inputDir = joyStick->getUserInput();
-  
-      if( (inputDir != NONE) && (inputDir != CENTER) && (inputDir != snake->getDirection()) )
+
+      if ((inputDir != NONE) && (inputDir != CENTER) && (inputDir != snake->getDirection()))
         break;
     }
   }
 
   // Check if user pressed any button
-  if(inputDir == NONE)
+  if (inputDir == NONE)
     inputDir = joyStick->getUserInput();
 
   // Check for valid input
-  if( (inputDir != NONE) && (inputDir != CENTER) && (inputDir != snake->getDirection()) )
+  if ((inputDir != NONE) && (inputDir != CENTER) && (inputDir != snake->getDirection()))
   {
     snake->setDirection(inputDir);
     inputDir = NONE;
   }
 
-  if(!(snake->move()))
+  if (!(snake->move()))
   {
     uint8_t snakeLength = snake->getLength();
     delete snake;
@@ -86,22 +85,20 @@ void loop(void)
   }
 
   // Check if snake eats the egg
-  if(egg->getPosition() == snake->getHeadPosition())
+  if (egg->getPosition() == snake->getHeadPosition())
   {
     (*snake)++;
     egg->move(snake);
   }
 
-  digitalWrite(SYSLED, LOW); // Toggle System LED
-
-  if( inputDir == NONE || inputDir == CENTER || inputDir == snake->getDirection() )
+  if (inputDir == NONE || inputDir == CENTER || inputDir == snake->getDirection())
   {
-    for(byte s=0;s<25;s++)
+    for (byte s = 0; s < 25; s++)
     {
       delay(snake->getSpeed());
       inputDir = joyStick->getUserInput();
 
-      if( (inputDir != NONE) && (inputDir != CENTER) && (inputDir != snake->getDirection()) )
+      if ((inputDir != NONE) && (inputDir != CENTER) && (inputDir != snake->getDirection()))
         break;
     }
   }
@@ -112,28 +109,28 @@ void displayResult(uint8_t length)
   char gScore = static_cast<char>(length);
   gScore -= 3;
 
-  if(gScore<10)
+  if (gScore < 10)
   {
     gScore += 0x30;
-    display->printBigNumber(&gScore,1,Point(6,1));
+    display->printBigNumber(&gScore, 1, Point(6, 1));
   }
-  else if(gScore<100)
+  else if (gScore < 100)
   {
     char gS[2];
-    gS[0] = static_cast<char>(gScore/10) + 0x30;
-    gS[1] = static_cast<char>(gScore%10) + 0x30;
+    gS[0] = static_cast<char>(gScore / 10) + 0x30;
+    gS[1] = static_cast<char>(gScore % 10) + 0x30;
 
-    display->printBigNumber(gS,2,Point(4,1));
+    display->printBigNumber(gS, 2, Point(4, 1));
   }
   else
   {
     char gS[3];
-    gS[0] = static_cast<char>(gScore/100) + 0x30;
-    gS[1] = (static_cast<char>(gScore/10)) - (gS[0]-0x30)*10 + 0x30;
-    gS[2] = static_cast<char>(gScore%10) + 0x30;
+    gS[0] = static_cast<char>(gScore / 100) + 0x30;
+    gS[1] = (static_cast<char>(gScore / 10)) - (gS[0] - 0x30) * 10 + 0x30;
+    gS[2] = static_cast<char>(gScore % 10) + 0x30;
 
-    display->printBigNumber(gS,3,Point(1,3));
+    display->printBigNumber(gS, 3, Point(1, 3));
   }
 
-  display->printString("Try again?",10,Point(3,6));
+  display->printString("Try again?", 10, Point(3, 6));
 }
