@@ -15,11 +15,11 @@
   Lesser General Public License for more details.
 ********************************************************************/
 #include <Arduino.h>
-#include "src/Snake.h"
-#include "src/Joystick.h"
 #include "src/DisplayInterface.h"
+#include "src/joystick.h"
 #include "src/OzOLED.h"
 #include "src/Egg.h"
+#include "src/Snake.h"
 
 void displayResult(void);
 
