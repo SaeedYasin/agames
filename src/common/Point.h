@@ -26,7 +26,7 @@ public:
   uint8_t y;
 
   Point();
-  ~Point();
+  virtual ~Point();
   Point(uint8_t, uint8_t);
 
   void operator=(const Point &);

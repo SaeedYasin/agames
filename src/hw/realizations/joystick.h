@@ -30,7 +30,7 @@ class Joystick
 {
 public:
   Joystick();
-  ~Joystick();
+  virtual ~Joystick();
   dir_t getUserInput();
   dir_t waitForUserInput();
 
