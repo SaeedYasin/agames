@@ -20,10 +20,12 @@
 #include "InputInterface.h"
 #include "OsInterface.h"
 #include "SnakeGame.h"
+#include <stddef.h>
 
 GameSelection::GameSelection(OsInterface *pOS, DisplayInterface *pDisp, InputInterface *pInput)
     : m_os(pOS), m_display(pDisp), m_input(pInput)
 {
+  m_currentGame = NULL;
 }
 
 GameSelection::~GameSelection(void)
@@ -35,7 +37,7 @@ void GameSelection::drawSelectionScreen(void)
   m_display->clearScreen();
   m_display->printString("Please select", 14, Point(1, 0));
   m_display->printString("a game...", 10, Point(3, 1));
-  m_display->printString("=> Snake", 8, Point(3, 4));
+  m_display->printString("> Snake", 7, Point(4, 4));
 }
 
 Game *GameSelection::getSelectedGame(void)
@@ -47,7 +49,16 @@ Game *GameSelection::getSelectedGame(void)
 
 void GameSelection::loop(void)
 {
-  Game *pGame = getSelectedGame();
-  pGame->loop();
-  delete pGame;
+  if (m_currentGame == NULL)
+  {
+    m_currentGame = getSelectedGame();
+  }
+
+  bool currentGameActive = m_currentGame->loop();
+
+  if (!currentGameActive)
+  {
+    delete m_currentGame;
+    m_currentGame = NULL;
+  }
 }

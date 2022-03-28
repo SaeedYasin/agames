@@ -34,6 +34,7 @@ private:
   OsInterface *m_os;
   DisplayInterface *m_display;
   InputInterface *m_input;
+  Game *m_currentGame;
 
   void drawSelectionScreen(void);
   Game *getSelectedGame(void);

@@ -33,7 +33,7 @@ public:
   SnakeGame(OsInterface *, DisplayInterface *, InputInterface *);
   virtual ~SnakeGame();
 
-  void loop(void);
+  bool loop(void);
 
 private:
   OsInterface *m_os;
@@ -45,6 +45,7 @@ private:
   dir_t m_inputDir;
 
   void displayResult(uint8_t);
+  void cleanup(void);
 };
 
 #endif

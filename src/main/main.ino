@@ -24,6 +24,25 @@ DisplayInterface *display;
 GameSelection *pGameSelection;
 InputInterface *joystick;
 OsInterface *os;
+bool systemLedStatus;
+
+#define SYSLED 13
+
+void initSystemLED(void)
+{
+  pinMode(SYSLED, OUTPUT);
+  systemLedStatus = true;
+}
+
+void toggleSystemLED(void)
+{
+  if (systemLedStatus)
+    digitalWrite(SYSLED, HIGH);
+  else
+    digitalWrite(SYSLED, LOW);
+
+  systemLedStatus = !systemLedStatus;
+}
 
 void setup(void)
 {
@@ -32,15 +51,11 @@ void setup(void)
   display = new OzOLED();
 
   pGameSelection = new GameSelection(os, display, joystick);
-
-  // SYSLED - indicates system is working
-  //#define SYSLED   13
-  // pinMode(SYSLED, OUTPUT);
-  // digitalWrite(SYSLED, HIGH); // Toggle System LED
-  // digitalWrite(SYSLED, LOW); // Toggle System LED
+  initSystemLED();
 }
 
 void loop(void)
 {
   pGameSelection->loop();
+  toggleSystemLED();
 }

@@ -20,6 +20,8 @@
 #include "InputInterface.h"
 #include "OsInterface.h"
 #include "Snake.h"
+#include <stddef.h>
+#include <stdlib.h>
 
 SnakeGame::SnakeGame(OsInterface *pOS, DisplayInterface *pDisp, InputInterface *pInput)
     : m_os(pOS), m_display(pDisp), m_input(pInput)
@@ -33,108 +35,100 @@ SnakeGame::SnakeGame(OsInterface *pOS, DisplayInterface *pDisp, InputInterface *
 
 SnakeGame::~SnakeGame(void)
 {
-  delete m_snake;
-  delete m_egg;
+  cleanup();
 }
 
-void SnakeGame::loop(void)
+void SnakeGame::cleanup(void)
 {
-  while (m_gameActive)
+  if (m_snake != NULL)
   {
-    if (m_inputDir == NONE || m_inputDir == CENTER || m_inputDir == m_snake->getDirection())
+    delete m_snake;
+    m_snake = NULL;
+  }
+
+  if (m_egg != NULL)
+  {
+    delete m_egg;
+    m_egg = NULL;
+  }
+}
+
+bool SnakeGame::loop(void)
+{
+  if (m_inputDir == NONE || m_inputDir == CENTER || m_inputDir == m_snake->getDirection())
+  {
+    for (uint8_t s = 0; s < 25; s++)
     {
-      for (uint8_t s = 0; s < 25; s++)
-      {
-        m_os->delayMs(m_snake->getSpeed());
-        m_inputDir = m_input->getUserInput();
-
-        if ((m_inputDir != NONE) && (m_inputDir != CENTER) && (m_inputDir != m_snake->getDirection()))
-          break;
-      }
-    }
-
-    // Check if user pressed any button
-    if (m_inputDir == NONE)
+      m_os->delayMs(m_snake->getSpeed());
       m_inputDir = m_input->getUserInput();
 
-    // Check for valid input
-    if ((m_inputDir != NONE) && (m_inputDir != CENTER) && (m_inputDir != m_snake->getDirection()))
-    {
-      m_snake->setDirection(m_inputDir);
-      m_inputDir = NONE;
-    }
-
-    if (!(m_snake->move()))
-    {
-      uint8_t snakeLength = m_snake->getLength();
-      delete m_snake;
-      delete m_egg;
-
-      displayResult(snakeLength);
-      dir_t key = m_input->waitForUserInput();
-
-      if (key != DOWN)
-      {
-        m_display->clearScreen();
-        m_snake = new Snake(m_display, m_os);
-        m_egg = new Egg(m_display, m_snake, m_os);
-        m_inputDir = NONE;
-      }
-      else
-      {
-        m_gameActive = false;
-      }
-    }
-
-    // Check if snake eats the egg
-    if (m_egg->getPosition() == m_snake->getHeadPosition())
-    {
-      (*m_snake)++;
-      m_egg->move(m_snake);
-    }
-
-    if (m_inputDir == NONE || m_inputDir == CENTER || m_inputDir == m_snake->getDirection())
-    {
-      for (uint8_t s = 0; s < 25; s++)
-      {
-        m_os->delayMs(m_snake->getSpeed());
-        m_inputDir = m_input->getUserInput();
-
-        if ((m_inputDir != NONE) && (m_inputDir != CENTER) && (m_inputDir != m_snake->getDirection()))
-          break;
-      }
+      if ((m_inputDir != NONE) && (m_inputDir != CENTER) && (m_inputDir != m_snake->getDirection()))
+        break;
     }
   }
+
+  // Check if user pressed any button
+  if (m_inputDir == NONE)
+    m_inputDir = m_input->getUserInput();
+
+  // Check for valid input
+  if ((m_inputDir != NONE) && (m_inputDir != CENTER) && (m_inputDir != m_snake->getDirection()))
+  {
+    m_snake->setDirection(m_inputDir);
+    m_inputDir = NONE;
+  }
+
+  if (!(m_snake->move()))
+  {
+    uint8_t snakeLength = m_snake->getLength();
+    cleanup();
+
+    displayResult(snakeLength);
+    dir_t key = m_input->waitForUserInput();
+
+    if (key != LEFT)
+    {
+      m_display->clearScreen();
+      m_snake = new Snake(m_display, m_os);
+      m_egg = new Egg(m_display, m_snake, m_os);
+      m_inputDir = NONE;
+    }
+    else
+    {
+      return false;
+    }
+  }
+
+  // Check if snake eats the egg
+  if (m_egg->getPosition() == m_snake->getHeadPosition())
+  {
+    (*m_snake)++;
+    m_egg->move(m_snake);
+  }
+
+  if (m_inputDir == NONE || m_inputDir == CENTER || m_inputDir == m_snake->getDirection())
+  {
+    for (uint8_t s = 0; s < 25; s++)
+    {
+      m_os->delayMs(m_snake->getSpeed());
+      m_inputDir = m_input->getUserInput();
+
+      if ((m_inputDir != NONE) && (m_inputDir != CENTER) && (m_inputDir != m_snake->getDirection()))
+        break;
+    }
+  }
+
+  return true;
 }
 
 void SnakeGame::displayResult(uint8_t length)
 {
+  char buffer[3] = {0};
   char gScore = static_cast<char>(length);
-  gScore -= 3;
+  gScore -= 3; // Subtract initial snake length
+  itoa(gScore, buffer, 10);
 
-  if (gScore < 10)
-  {
-    gScore += 0x30;
-    m_display->printBigNumber(&gScore, 1, Point(6, 1));
-  }
-  else if (gScore < 100)
-  {
-    char gS[2];
-    gS[0] = static_cast<char>(gScore / 10) + 0x30;
-    gS[1] = static_cast<char>(gScore % 10) + 0x30;
-
-    m_display->printBigNumber(gS, 2, Point(4, 1));
-  }
-  else
-  {
-    char gS[3];
-    gS[0] = static_cast<char>(gScore / 100) + 0x30;
-    gS[1] = (static_cast<char>(gScore / 10)) - (gS[0] - 0x30) * 10 + 0x30;
-    gS[2] = static_cast<char>(gScore % 10) + 0x30;
-
-    m_display->printBigNumber(gS, 3, Point(1, 3));
-  }
-
-  m_display->printString("Try again?", 10, Point(3, 6));
-  m_display->printString("Exit", 5, Point(5, 7));
+  m_display->printBigNumber(buffer, 3, Point(gScore > 9 ? 4 : 6, 0));
+  m_display->printString("Try again?", 10, Point(3, 5));
+  m_display->printString("< Exit", 7, Point(0, 7));
 }

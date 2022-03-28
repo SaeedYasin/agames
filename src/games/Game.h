@@ -23,10 +23,7 @@ public:
   Game();
   virtual ~Game();
 
-  virtual void loop(void) = 0;
-
-protected:
-  bool m_gameActive;
+  virtual bool loop(void) = 0;
 };
 
 #endif

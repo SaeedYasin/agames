@@ -18,7 +18,6 @@
 
 Game::Game(void)
 {
-  m_gameActive = true;
 }
 
 Game::~Game(void)
