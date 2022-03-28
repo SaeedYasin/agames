@@ -25,10 +25,9 @@ public:
   OsInterface();
   virtual ~OsInterface();
 
-  virtual int16_t analogRead(uint8_t) = 0;
-  virtual void randomSeed(int16_t) = 0;
-  virtual int32_t random(uint16_t) = 0;
-  virtual void delay(uint32_t) = 0;
+  virtual void seedRandomFromADC(void) = 0;
+  virtual int32_t getRandomValue(uint16_t) = 0;
+  virtual void delayMs(uint32_t) = 0;
 };
 
 #endif

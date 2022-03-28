@@ -25,10 +25,9 @@ public:
   ArduinoOs();
   virtual ~ArduinoOs();
 
-  int16_t analogRead(uint8_t);
-  void randomSeed(int16_t);
-  int32_t random(uint16_t);
-  void delay(uint32_t);
+  void seedRandomFromADC(void);
+  int32_t getRandomValue(uint16_t);
+  void delayMs(uint32_t);
 };
 
 #endif

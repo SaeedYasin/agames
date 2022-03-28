@@ -25,22 +25,17 @@ ArduinoOs::~ArduinoOs(void)
 {
 }
 
-int16_t ArduinoOs::analogRead(uint8_t pin)
+void ArduinoOs::seedRandomFromADC(void)
 {
-  return analogRead(pin);
+  randomSeed(analogRead(0));
 }
 
-void ArduinoOs::randomSeed(int16_t seed)
-{
-  randomSeed(seed);
-}
-
-int32_t ArduinoOs::random(uint16_t max)
+int32_t ArduinoOs::getRandomValue(uint16_t max)
 {
   return random(max);
 }
 
-void ArduinoOs::delay(uint32_t ms)
+void ArduinoOs::delayMs(uint32_t ms)
 {
   delay(ms);
 }
