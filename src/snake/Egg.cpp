@@ -17,6 +17,7 @@
 #include "Egg.h"
 #include <Arduino.h>
 #include "Snake.h"
+#include <stdint.h>
 
 // Friend function used to make sure not to create egg on the snake
 bool isValidEgg(Egg *pE, Snake *pS)

@@ -16,6 +16,7 @@
 ********************************************************************/
 #include "Snake.h"
 #include <Arduino.h>
+#include <stddef.h>
 
 Snake::Snake(DisplayInterface *display)
     : m_length(3), m_direction(RIGHT), m_speed(VERYSLOW), m_display(NULL)

@@ -1,1 +1,1 @@
-../../hw/realizations/joystick.h
+../../hw/realizations/Joystick.h

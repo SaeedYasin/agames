@@ -18,7 +18,6 @@
 #define __EGG_H
 
 #include "DisplayInterface.h"
-#include <stdint.h>
 
 class Snake;
 
