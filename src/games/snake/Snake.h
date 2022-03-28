@@ -60,7 +60,7 @@ private:
   dir_t m_direction;
   speed_t m_speed;
   DisplayInterface *m_display;
-  OsInterface *m_OS;
+  OsInterface *m_os;
 
   SnakeCell *pSnakeHead;
   bool selfCollision(void);

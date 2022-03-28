@@ -18,6 +18,7 @@
 #define __GAME_SELECTION_H
 
 class DisplayInterface;
+class Game;
 class InputInterface;
 class OsInterface;
 
@@ -26,6 +27,16 @@ class GameSelection
 public:
   GameSelection(OsInterface *, DisplayInterface *, InputInterface *);
   virtual ~GameSelection();
+
+  void loop(void);
+
+private:
+  OsInterface *m_os;
+  DisplayInterface *m_display;
+  InputInterface *m_input;
+
+  void drawSelectionScreen(void);
+  Game *getSelectedGame(void);
 };
 
 #endif

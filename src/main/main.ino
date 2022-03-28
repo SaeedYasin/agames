@@ -16,29 +16,22 @@
 ********************************************************************/
 #include <Arduino.h>
 #include "src/ArduinoOs.h"
+#include "src/GameSelection.h"
 #include "src/Joystick.h"
 #include "src/OzOLED.h"
-#include "src/Egg.h"
-#include "src/Snake.h"
 
-void displayResult(void);
-
-OsInterface *os;
 DisplayInterface *display;
-Snake *snake;
-InputInterface *joyStick;
-Egg *egg;
-dir_t inputDir;
+GameSelection *pGameSelection;
+InputInterface *joystick;
+OsInterface *os;
 
 void setup(void)
 {
   os = new ArduinoOs();
-  joyStick = new Joystick();
+  joystick = new Joystick();
   display = new OzOLED();
 
-  snake = new Snake(display, os);
-  egg = new Egg(display, snake, os);
-  inputDir = NONE;
+  pGameSelection = new GameSelection(os, display, joystick);
 
   // SYSLED - indicates system is working
   //#define SYSLED   13
@@ -49,90 +42,5 @@ void setup(void)
 
 void loop(void)
 {
-  if (inputDir == NONE || inputDir == CENTER || inputDir == snake->getDirection())
-  {
-    for (byte s = 0; s < 25; s++)
-    {
-      delay(snake->getSpeed());
-      inputDir = joyStick->getUserInput();
-
-      if ((inputDir != NONE) && (inputDir != CENTER) && (inputDir != snake->getDirection()))
-        break;
-    }
-  }
-
-  // Check if user pressed any button
-  if (inputDir == NONE)
-    inputDir = joyStick->getUserInput();
-
-  // Check for valid input
-  if ((inputDir != NONE) && (inputDir != CENTER) && (inputDir != snake->getDirection()))
-  {
-    snake->setDirection(inputDir);
-    inputDir = NONE;
-  }
-
-  if (!(snake->move()))
-  {
-    uint8_t snakeLength = snake->getLength();
-    delete snake;
-    delete egg;
-
-    displayResult(snakeLength);
-    joyStick->waitForUserInput();
-    display->clearScreen();
-    snake = new Snake(display, os);
-    egg = new Egg(display, snake, os);
-    inputDir = NONE;
-  }
-
-  // Check if snake eats the egg
-  if (egg->getPosition() == snake->getHeadPosition())
-  {
-    (*snake)++;
-    egg->move(snake);
-  }
-
-  if (inputDir == NONE || inputDir == CENTER || inputDir == snake->getDirection())
-  {
-    for (byte s = 0; s < 25; s++)
-    {
-      delay(snake->getSpeed());
-      inputDir = joyStick->getUserInput();
-
-      if ((inputDir != NONE) && (inputDir != CENTER) && (inputDir != snake->getDirection()))
-        break;
-    }
-  }
-}
-
-void displayResult(uint8_t length)
-{
-  char gScore = static_cast<char>(length);
-  gScore -= 3;
-
-  if (gScore < 10)
-  {
-    gScore += 0x30;
-    display->printBigNumber(&gScore, 1, Point(6, 1));
-  }
-  else if (gScore < 100)
-  {
-    char gS[2];
-    gS[0] = static_cast<char>(gScore / 10) + 0x30;
-    gS[1] = static_cast<char>(gScore % 10) + 0x30;
-
-    display->printBigNumber(gS, 2, Point(4, 1));
-  }
-  else
-  {
-    char gS[3];
-    gS[0] = static_cast<char>(gScore / 100) + 0x30;
-    gS[1] = (static_cast<char>(gScore / 10)) - (gS[0] - 0x30) * 10 + 0x30;
-    gS[2] = static_cast<char>(gScore % 10) + 0x30;
-
-    display->printBigNumber(gS, 3, Point(1, 3));
-  }
-
-  display->printString("Try again?", 10, Point(3, 6));
+  pGameSelection->loop();
 }

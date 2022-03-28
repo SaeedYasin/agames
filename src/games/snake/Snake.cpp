@@ -21,7 +21,7 @@
 
 Snake::Snake(DisplayInterface *display, OsInterface *OS)
     : m_length(3), m_direction(RIGHT), m_speed(VERYSLOW),
-      m_display(NULL), m_OS(OS)
+      m_display(NULL), m_os(OS)
 {
   pSnakeHead = new SnakeCell;
   pSnakeHead->position.x = 3;
@@ -342,9 +342,9 @@ void Snake::animateDying(void)
   for (uint8_t i = 0; i < 4; i++)
   {
     undraw();
-    m_OS->delayMs(150);
+    m_os->delayMs(150);
     draw();
-    m_OS->delayMs(150);
+    m_os->delayMs(150);
   }
 }
 

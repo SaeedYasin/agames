@@ -17,11 +17,34 @@
 #ifndef __SNAKE_GAME_H
 #define __SNAKE_GAME_H
 
-class SnakeGame
+#include "Game.h"
+#include <stdint.h>
+#include "types.h"
+
+class DisplayInterface;
+class Egg;
+class InputInterface;
+class OsInterface;
+class Snake;
+
+class SnakeGame : public Game
 {
 public:
-  SnakeGame();
+  SnakeGame(OsInterface *, DisplayInterface *, InputInterface *);
   virtual ~SnakeGame();
+
+  void loop(void);
+
+private:
+  OsInterface *m_os;
+  DisplayInterface *m_display;
+  InputInterface *m_input;
+
+  Snake *m_snake;
+  Egg *m_egg;
+  dir_t m_inputDir;
+
+  void displayResult(uint8_t);
 };
 
 #endif

@@ -14,34 +14,13 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
 ********************************************************************/
-#ifndef __EGG_H
-#define __EGG_H
+#include "Game.h"
 
-#include "Point.h"
-
-class DisplayInterface;
-class Snake;
-class OsInterface;
-
-class Egg
+Game::Game(void)
 {
-public:
-  Egg();
-  Egg(DisplayInterface *, Snake *, OsInterface *);
-  virtual ~Egg();
-  Point getPosition(void);
-  void move(Snake *);
+  m_gameActive = true;
+}
 
-  friend bool isValidEgg(Egg *, Snake *);
-
-private:
-  Point m_position;
-  DisplayInterface *m_display;
-  OsInterface *m_os;
-
-  void findPosition(Snake *);
-  void draw(void);
-  void undraw(void);
-};
-
-#endif
+Game::~Game(void)
+{
+}
