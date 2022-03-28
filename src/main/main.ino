@@ -16,7 +16,6 @@
 ********************************************************************/
 #include <Arduino.h>
 #include "src/ArduinoOs.h"
-#include "src/DisplayInterface.h"
 #include "src/Joystick.h"
 #include "src/OzOLED.h"
 #include "src/Egg.h"
@@ -27,14 +26,14 @@ void displayResult(void);
 OsInterface *os;
 DisplayInterface *display;
 Snake *snake;
-Joystick *joyStick;
+InputInterface *joyStick;
 Egg *egg;
 dir_t inputDir;
 
 void setup(void)
 {
   os = new ArduinoOs();
-  joyStick = new Joystick;
+  joyStick = new Joystick();
   display = new OzOLED();
 
   snake = new Snake(display, os);

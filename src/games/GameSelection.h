@@ -14,30 +14,18 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
 ********************************************************************/
-#ifndef __JOYSTICK_H
-#define __JOYSTICK_H
+#ifndef __GAME_SELECTION_H
+#define __GAME_SELECTION_H
 
-#include "InputInterface.h"
-#include <stdint.h>
-#include "types.h"
+class DisplayInterface;
+class InputInterface;
+class OsInterface;
 
-#define UP_PIN 2
-#define CENTER_PIN 3
-#define LEFT_PIN 4
-#define DOWN_PIN 5
-#define RIGHT_PIN 6
-
-class Joystick : public InputInterface
+class GameSelection
 {
 public:
-  Joystick();
-  virtual ~Joystick();
-  dir_t getUserInput();
-  dir_t waitForUserInput();
-
-private:
-  dir_t scanIOs();
-  void setTimer1Frequency(uint8_t);
+  GameSelection(OsInterface *, DisplayInterface *, InputInterface *);
+  virtual ~GameSelection();
 };
 
 #endif

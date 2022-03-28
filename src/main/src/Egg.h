@@ -1,1 +1,1 @@
-../../snake/Egg.h
+../../games/snake/Egg.h

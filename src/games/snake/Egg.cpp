@@ -47,8 +47,7 @@ Egg::Egg(void)
 Egg::Egg(DisplayInterface *display, Snake *pS, OsInterface *OS)
     : m_OS(OS)
 {
-  // Seed random value from ADC
-  m_OS->randomSeed(m_OS->analogRead(0));
+  m_OS->seedRandomFromADC();
 
   m_display = display;
   findPosition(pS);
@@ -64,8 +63,8 @@ void Egg::findPosition(Snake *pS)
 {
   do
   {
-    m_position.x = m_OS->random(m_display->MAX_X());
-    m_position.y = m_OS->random(m_display->MAX_Y());
+    m_position.x = (uint8_t)m_OS->getRandomValue(m_display->MAX_X());
+    m_position.y = (uint8_t)m_OS->getRandomValue(m_display->MAX_Y());
 
   } while (!isValidEgg(this, pS));
 }

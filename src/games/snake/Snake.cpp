@@ -342,9 +342,9 @@ void Snake::animateDying(void)
   for (uint8_t i = 0; i < 4; i++)
   {
     undraw();
-    m_OS->delay(150);
+    m_OS->delayMs(150);
     draw();
-    m_OS->delay(150);
+    m_OS->delayMs(150);
   }
 }
 

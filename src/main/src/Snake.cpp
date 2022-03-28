@@ -1,1 +1,1 @@
-../../snake/Snake.cpp
+../../games/snake/Snake.cpp

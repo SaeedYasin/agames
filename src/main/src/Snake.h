@@ -1,1 +1,1 @@
-../../snake/Snake.h
+../../games/snake/Snake.h
