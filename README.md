@@ -1,6 +1,7 @@
 # agames :video_game:
 
-Arduino Games using OOP C/C++
+Arduino Games using `OOP C/C++` with `SOLID principles` and `Design Patterns`.
+This code repo was created just to practice software architecture and design principles.
 
 Hardware:
 Arduino nano with 0.96 inch OLED display along with small joystick.
