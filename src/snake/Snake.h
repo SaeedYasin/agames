@@ -17,11 +17,13 @@
 #ifndef __SNAKE_H
 #define __SNAKE_H
 
-#include "DisplayInterface.h"
+#include "Point.h"
 #include <stdint.h>
 #include "types.h"
 
+class DisplayInterface;
 class Egg;
+class OsInterface;
 
 struct SnakeCell
 {
@@ -32,7 +34,7 @@ struct SnakeCell
 class Snake
 {
 public:
-  Snake(DisplayInterface *);
+  Snake(DisplayInterface *, OsInterface *);
   virtual ~Snake();
   bool move(void);
   void setDirection(dir_t);
@@ -58,6 +60,7 @@ private:
   dir_t m_direction;
   speed_t m_speed;
   DisplayInterface *m_display;
+  OsInterface *m_OS;
 
   SnakeCell *pSnakeHead;
   bool selfCollision(void);

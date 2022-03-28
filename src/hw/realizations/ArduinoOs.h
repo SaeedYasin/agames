@@ -14,34 +14,21 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
 ********************************************************************/
-#ifndef __EGG_H
-#define __EGG_H
+#ifndef __ARDUINO_OS_H
+#define __ARDUINO_OS_H
 
-#include "Point.h"
+#include "OsInterface.h"
 
-class DisplayInterface;
-class Snake;
-class OsInterface;
-
-class Egg
+class ArduinoOs : public OsInterface
 {
 public:
-  Egg();
-  Egg(DisplayInterface *, Snake *, OsInterface *);
-  virtual ~Egg();
-  Point getPosition(void);
-  void move(Snake *);
+  ArduinoOs();
+  virtual ~ArduinoOs();
 
-  friend bool isValidEgg(Egg *, Snake *);
-
-private:
-  Point m_position;
-  DisplayInterface *m_display;
-  OsInterface *m_OS;
-
-  void findPosition(Snake *);
-  void draw(void);
-  void undraw(void);
+  int16_t analogRead(uint8_t);
+  void randomSeed(int16_t);
+  int32_t random(uint16_t);
+  void delay(uint32_t);
 };
 
 #endif

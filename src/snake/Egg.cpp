@@ -15,7 +15,8 @@
   Lesser General Public License for more details.
 ********************************************************************/
 #include "Egg.h"
-#include <Arduino.h>
+#include "DisplayInterface.h"
+#include "OsInterface.h"
 #include "Snake.h"
 #include <stdint.h>
 
@@ -43,10 +44,11 @@ Egg::Egg(void)
 {
 }
 
-Egg::Egg(DisplayInterface *display, Snake *pS)
+Egg::Egg(DisplayInterface *display, Snake *pS, OsInterface *OS)
+    : m_OS(OS)
 {
   // Seed random value from ADC
-  randomSeed(analogRead(0));
+  m_OS->randomSeed(m_OS->analogRead(0));
 
   m_display = display;
   findPosition(pS);
@@ -62,8 +64,8 @@ void Egg::findPosition(Snake *pS)
 {
   do
   {
-    m_position.x = random(m_display->MAX_X());
-    m_position.y = random(m_display->MAX_Y());
+    m_position.x = m_OS->random(m_display->MAX_X());
+    m_position.y = m_OS->random(m_display->MAX_Y());
 
   } while (!isValidEgg(this, pS));
 }

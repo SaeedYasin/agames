@@ -15,6 +15,7 @@
   Lesser General Public License for more details.
 ********************************************************************/
 #include <Arduino.h>
+#include "src/ArduinoOs.h"
 #include "src/DisplayInterface.h"
 #include "src/Joystick.h"
 #include "src/OzOLED.h"
@@ -23,6 +24,7 @@
 
 void displayResult(void);
 
+OsInterface *os;
 DisplayInterface *display;
 Snake *snake;
 Joystick *joyStick;
@@ -31,11 +33,12 @@ dir_t inputDir;
 
 void setup(void)
 {
+  os = new ArduinoOs();
   joyStick = new Joystick;
   display = new OzOLED();
 
-  snake = new Snake(display);
-  egg = new Egg(display, snake);
+  snake = new Snake(display, os);
+  egg = new Egg(display, snake, os);
   inputDir = NONE;
 
   // SYSLED - indicates system is working
@@ -79,8 +82,8 @@ void loop(void)
     displayResult(snakeLength);
     joyStick->waitForUserInput();
     display->clearScreen();
-    snake = new Snake(display);
-    egg = new Egg(display, snake);
+    snake = new Snake(display, os);
+    egg = new Egg(display, snake, os);
     inputDir = NONE;
   }
 

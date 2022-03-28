@@ -15,11 +15,13 @@
   Lesser General Public License for more details.
 ********************************************************************/
 #include "Snake.h"
-#include <Arduino.h>
+#include "DisplayInterface.h"
+#include "OsInterface.h"
 #include <stddef.h>
 
-Snake::Snake(DisplayInterface *display)
-    : m_length(3), m_direction(RIGHT), m_speed(VERYSLOW), m_display(NULL)
+Snake::Snake(DisplayInterface *display, OsInterface *OS)
+    : m_length(3), m_direction(RIGHT), m_speed(VERYSLOW),
+      m_display(NULL), m_OS(OS)
 {
   pSnakeHead = new SnakeCell;
   pSnakeHead->position.x = 3;
@@ -340,9 +342,9 @@ void Snake::animateDying(void)
   for (uint8_t i = 0; i < 4; i++)
   {
     undraw();
-    delay(150);
+    m_OS->delay(150);
     draw();
-    delay(150);
+    m_OS->delay(150);
   }
 }
 

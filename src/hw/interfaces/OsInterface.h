@@ -14,34 +14,21 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
 ********************************************************************/
-#ifndef __EGG_H
-#define __EGG_H
+#ifndef __OS_INTERFACE_H
+#define __OS_INTERFACE_H
 
-#include "Point.h"
+#include <stdint.h>
 
-class DisplayInterface;
-class Snake;
-class OsInterface;
-
-class Egg
+class OsInterface
 {
 public:
-  Egg();
-  Egg(DisplayInterface *, Snake *, OsInterface *);
-  virtual ~Egg();
-  Point getPosition(void);
-  void move(Snake *);
+  OsInterface();
+  virtual ~OsInterface();
 
-  friend bool isValidEgg(Egg *, Snake *);
-
-private:
-  Point m_position;
-  DisplayInterface *m_display;
-  OsInterface *m_OS;
-
-  void findPosition(Snake *);
-  void draw(void);
-  void undraw(void);
+  virtual int16_t analogRead(uint8_t) = 0;
+  virtual void randomSeed(int16_t) = 0;
+  virtual int32_t random(uint16_t) = 0;
+  virtual void delay(uint32_t) = 0;
 };
 
 #endif
