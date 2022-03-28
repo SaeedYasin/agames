@@ -13,10 +13,6 @@ Use the command, `ls /dev/* | grep cu.usb` to detect the port for arduino progra
 
 Control direction of snake using joystick and eat eggs. If only life could be that simple. :satisfied:
 
-## Snake Game
-
-Control direction of snake using joystick and eat eggs. If only life could be that simple. :D
-
-Watch youtube video of sample game play below.
+Watch youtube video of sample game play below,
 
 [![Snake Game Play](https://github.com/SaeedYasin/agames/blob/master/images/Snake%20Game%20Youtube%20Thumbnail.png?raw=true)](https://www.youtube.com/watch?v=ztqpjjEvm6k)
