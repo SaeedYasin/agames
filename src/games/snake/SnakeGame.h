@@ -44,8 +44,9 @@ private:
   Egg *m_egg;
   dir_t m_inputDir;
 
-  void displayResult(uint8_t);
+  void init(void);
   void cleanup(void);
+  void displayResult(uint8_t);
 };
 
 #endif

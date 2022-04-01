@@ -25,12 +25,20 @@ class OsInterface;
 class GameSelection
 {
 public:
-  GameSelection(OsInterface *, DisplayInterface *, InputInterface *);
-  virtual ~GameSelection();
-
+  static GameSelection *getInstance();
+  static void destroyInstance();
   void loop(void);
 
+  void setOS(OsInterface *);
+  void setDisplay(DisplayInterface *);
+  void setInput(InputInterface *);
+
 private:
+  GameSelection();
+  virtual ~GameSelection();
+
+  static GameSelection *m_instance;
+
   OsInterface *m_os;
   DisplayInterface *m_display;
   InputInterface *m_input;

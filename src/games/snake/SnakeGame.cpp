@@ -26,16 +26,20 @@
 SnakeGame::SnakeGame(OsInterface *pOS, DisplayInterface *pDisp, InputInterface *pInput)
     : m_os(pOS), m_display(pDisp), m_input(pInput)
 {
-  m_display->clearScreen();
-
-  m_snake = new Snake(m_display, m_os);
-  m_egg = new Egg(m_display, m_snake, m_os);
-  m_inputDir = NONE;
+  init();
 }
 
 SnakeGame::~SnakeGame(void)
 {
   cleanup();
+}
+
+void SnakeGame::init(void)
+{
+  m_display->clearScreen();
+  m_snake = new Snake(m_display, m_os);
+  m_egg = new Egg(m_display, m_snake, m_os);
+  m_inputDir = NONE;
 }
 
 void SnakeGame::cleanup(void)
@@ -82,21 +86,14 @@ bool SnakeGame::loop(void)
   {
     uint8_t snakeLength = m_snake->getLength();
     cleanup();
-
     displayResult(snakeLength);
+
     dir_t key = m_input->waitForUserInput();
 
     if (key != LEFT)
-    {
-      m_display->clearScreen();
-      m_snake = new Snake(m_display, m_os);
-      m_egg = new Egg(m_display, m_snake, m_os);
-      m_inputDir = NONE;
-    }
+      init();
     else
-    {
       return false;
-    }
   }
 
   // Check if snake eats the egg

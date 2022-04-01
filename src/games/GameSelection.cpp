@@ -22,8 +22,41 @@
 #include "SnakeGame.h"
 #include <stddef.h>
 
-GameSelection::GameSelection(OsInterface *pOS, DisplayInterface *pDisp, InputInterface *pInput)
-    : m_os(pOS), m_display(pDisp), m_input(pInput)
+GameSelection *GameSelection::m_instance = NULL;
+
+GameSelection *GameSelection::getInstance()
+{
+  if (m_instance == NULL)
+    m_instance = new GameSelection();
+
+  return m_instance;
+}
+
+void GameSelection::destroyInstance()
+{
+  if (m_instance != NULL)
+  {
+    delete m_instance;
+    m_instance = NULL;
+  }
+}
+
+void GameSelection::setOS(OsInterface *pOS)
+{
+  m_os = pOS;
+}
+
+void GameSelection::setDisplay(DisplayInterface *pDisp)
+{
+  m_display = pDisp;
+}
+
+void GameSelection::setInput(InputInterface *pInput)
+{
+  m_input = pInput;
+}
+
+GameSelection::GameSelection()
 {
   m_currentGame = NULL;
 }

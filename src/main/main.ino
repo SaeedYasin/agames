@@ -20,13 +20,8 @@
 #include "src/Joystick.h"
 #include "src/OzOLED.h"
 
-DisplayInterface *display;
-GameSelection *pGameSelection;
-InputInterface *joystick;
-OsInterface *os;
-bool systemLedStatus;
-
 #define SYSLED 13
+bool systemLedStatus;
 
 void initSystemLED(void)
 {
@@ -44,13 +39,15 @@ void toggleSystemLED(void)
   systemLedStatus = !systemLedStatus;
 }
 
+GameSelection *pGameSelection;
+
 void setup(void)
 {
-  os = new ArduinoOs();
-  joystick = new Joystick();
-  display = new OzOLED();
+  pGameSelection = GameSelection::getInstance();
+  pGameSelection->setOS(new ArduinoOs());
+  pGameSelection->setDisplay(new OzOLED());
+  pGameSelection->setInput(new Joystick());
 
-  pGameSelection = new GameSelection(os, display, joystick);
   initSystemLED();
 }
 
