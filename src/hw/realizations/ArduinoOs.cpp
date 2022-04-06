@@ -16,9 +16,15 @@
 ********************************************************************/
 #include "ArduinoOs.h"
 #include <Arduino.h>
+#include "stdarg.h"
+
+#define MAX_LOG_BUFFER_SIZE 256
+static char LOG_ERROR_MSG[] = "non-printable message";
 
 ArduinoOs::ArduinoOs(void)
+    : m_logType(NO_LOG_TYPE)
 {
+  log("System initialized - using C++%ld", __cplusplus);
 }
 
 ArduinoOs::~ArduinoOs(void)
@@ -38,4 +44,79 @@ int32_t ArduinoOs::getRandomValue(uint16_t max)
 void ArduinoOs::delayMs(uint32_t ms)
 {
   delay(ms);
+}
+
+bool ArduinoOs::sanitizeLogBuffer(char *buffer, int bufferSize, int noOfBytesWritten)
+{
+  // Check fot encoding error
+  if (noOfBytesWritten < 0)
+    return false;
+
+  // Check for buffer overflow
+  if (noOfBytesWritten > (int)bufferSize - 1)
+    return false;
+
+  // Ensure null termination
+  buffer[noOfBytesWritten] = '\0';
+
+  return true;
+}
+
+bool ArduinoOs::isEnabled(log_t log)
+{
+  bool isEnabled = false;
+
+  if (log == NO_LOG_TYPE)
+    isEnabled = m_logType != NO_LOG_TYPE;
+  else
+    isEnabled = (unsigned char)(m_logType & log) > 0;
+
+  return isEnabled;
+}
+
+void ArduinoOs::setLogEnable(log_t log, bool enable)
+{
+  if (enable)
+  {
+    m_logType = (log_t)(m_logType | log);
+  }
+  else
+  {
+    m_logType = (log_t)(m_logType & ~log);
+  }
+
+  handleLogTypeChange();
+}
+
+void ArduinoOs::handleLogTypeChange(void)
+{
+  if (isEnabled(SERIAL_LOG_TYPE))
+  {
+    Serial.begin(9600);
+    while (!Serial)
+    {
+    }
+  }
+  else
+  {
+    Serial.end();
+  }
+}
+
+void ArduinoOs::log(const char *msg, ...)
+{
+  if (isEnabled())
+  {
+    char buffer[MAX_LOG_BUFFER_SIZE];
+    int bufferSize = sizeof(buffer);
+
+    va_list args;
+    va_start(args, msg);
+    int noOfBytesWritten = vsnprintf(buffer, bufferSize, msg, args);
+    va_end(args);
+
+    bool success = sanitizeLogBuffer(buffer, bufferSize, noOfBytesWritten);
+
+    Serial.println(success ? buffer : LOG_ERROR_MSG);
+  }
 }

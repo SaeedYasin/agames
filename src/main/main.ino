@@ -43,8 +43,11 @@ GameSelection *pGameSelection;
 
 void setup(void)
 {
+  OsInterface *pOs = new ArduinoOs();
+  pOs->setLogEnable(SERIAL_LOG_TYPE, true);
+
   pGameSelection = GameSelection::getInstance();
-  pGameSelection->setOS(new ArduinoOs());
+  pGameSelection->setOS(pOs);
   pGameSelection->setDisplay(new OzOLED());
   pGameSelection->setInput(new Joystick());
 

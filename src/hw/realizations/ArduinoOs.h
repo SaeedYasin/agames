@@ -28,6 +28,17 @@ public:
   void seedRandomFromADC(void);
   int32_t getRandomValue(uint16_t);
   void delayMs(uint32_t);
+
+  bool isEnabled(log_t log = NO_LOG_TYPE);
+  void setLogEnable(log_t, bool);
+  void log(const char *, ...);
+
+protected:
+  log_t m_logType;
+
+private:
+  void handleLogTypeChange(void);
+  bool sanitizeLogBuffer(char *, int, int);
 };
 
 #endif

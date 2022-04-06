@@ -19,6 +19,12 @@
 
 #include <stdint.h>
 
+typedef enum LogType
+{
+  NO_LOG_TYPE = 0x00,
+  SERIAL_LOG_TYPE = 0x01
+} log_t;
+
 class OsInterface
 {
 public:
@@ -28,6 +34,13 @@ public:
   virtual void seedRandomFromADC(void) = 0;
   virtual int32_t getRandomValue(uint16_t) = 0;
   virtual void delayMs(uint32_t) = 0;
+
+  virtual bool isEnabled(log_t);
+  virtual void setLogEnable(log_t, bool);
+  virtual void log(const char *, ...);
+
+protected:
+  log_t m_logType;
 };
 
 #endif

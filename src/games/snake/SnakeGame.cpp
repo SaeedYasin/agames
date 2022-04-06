@@ -99,6 +99,7 @@ bool SnakeGame::loop(void)
   // Check if snake eats the egg
   if (m_egg->getPosition() == m_snake->getHeadPosition())
   {
+    m_os->log("Snake ate the egg at x=%d,y=%d", m_egg->getPosition().x, m_egg->getPosition().y);
     (*m_snake)++;
     m_egg->move(m_snake);
   }
