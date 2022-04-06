@@ -82,7 +82,7 @@ bool SnakeGame::loop(void)
     m_inputDir = NONE;
   }
 
-  if (!(m_snake->move()))
+  if ((m_snake->move()) == false)
   {
     uint8_t snakeLength = m_snake->getLength();
     cleanup();

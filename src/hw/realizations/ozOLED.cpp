@@ -407,9 +407,7 @@ OzOLED::OzOLED()
 	if (I2C_400KHZ)
 	{
 		// save I2C bitrate (default 100Khz)
-		byte twbrbackup = TWBR;
 		TWBR = 12;
-		// TWBR = twbrbackup;
 		// Serial.println(TWBR, DEC);
 		// Serial.println(TWSR & 0x3, DEC);
 	}

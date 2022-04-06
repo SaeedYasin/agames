@@ -165,7 +165,7 @@ bool Snake::move(void)
 SnakeCell *Snake::findTail(void)
 {
   SnakeCell *pHeadCell = pSnakeHead;
-  SnakeCell *pTailCell;
+  SnakeCell *pTailCell = NULL;
 
   for (uint8_t i = 0; i < (m_length - 1); i++)
   {
@@ -179,7 +179,7 @@ SnakeCell *Snake::findTail(void)
 SnakeCell *Snake::findSecondLastCell(void)
 {
   SnakeCell *pHeadCell = pSnakeHead;
-  SnakeCell *pSecondLastCell;
+  SnakeCell *pSecondLastCell = NULL;
 
   for (uint8_t i = 0; i < (m_length - 2); i++)
   {

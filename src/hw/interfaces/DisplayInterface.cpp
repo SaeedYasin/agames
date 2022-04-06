@@ -24,17 +24,17 @@ DisplayInterface::~DisplayInterface(void)
 {
 }
 
-const uint8_t DisplayInterface::MAX_X(void)
+uint8_t DisplayInterface::MAX_X(void)
 {
   return m_max_x;
 }
 
-const uint8_t DisplayInterface::MAX_Y(void)
+uint8_t DisplayInterface::MAX_Y(void)
 {
   return m_max_y;
 }
 
-const Point DisplayInterface::MAX_SIZE(void)
+Point DisplayInterface::MAX_SIZE(void)
 {
   return m_max_size;
 }

@@ -37,9 +37,9 @@ public:
   virtual void printString(const char *string, uint8_t numChar, Point pos) = 0;
   virtual void printBigNumber(const char *number, uint8_t numChar, Point pos) = 0;
 
-  const uint8_t MAX_X(void);
-  const uint8_t MAX_Y(void);
-  const Point MAX_SIZE(void);
+  uint8_t MAX_X(void);
+  uint8_t MAX_Y(void);
+  Point MAX_SIZE(void);
 
 protected:
   uint8_t m_max_x;
