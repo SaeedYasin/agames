@@ -14,20 +14,18 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
 ********************************************************************/
-#ifndef __INPUT_INTERFACE_H
-#define __INPUT_INTERFACE_H
+#ifndef __LISTENER_H
+#define __LISTENER_H
 
-#include "Notifier.h"
-#include "types.h"
+class Event;
 
-class InputInterface : public Notifier
+class Listener
 {
 public:
-  InputInterface();
-  virtual ~InputInterface();
+  Listener();
+  virtual ~Listener();
 
-  virtual dir_t getUserInput() = 0;
-  virtual dir_t waitForUserInput() = 0;
+  virtual void eventOccurred(const Event *const event) = 0;
 };
 
 #endif

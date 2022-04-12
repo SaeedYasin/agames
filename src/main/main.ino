@@ -49,7 +49,7 @@ void setup(void)
   pGameSelection = GameSelection::getInstance();
   pGameSelection->setOS(pOs);
   pGameSelection->setDisplay(new OzOLED());
-  pGameSelection->setInput(new Joystick());
+  pGameSelection->setInput(new Joystick(pOs));
 
   initSystemLED();
 }

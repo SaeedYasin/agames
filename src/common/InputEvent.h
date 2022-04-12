@@ -14,20 +14,27 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
 ********************************************************************/
-#ifndef __INPUT_INTERFACE_H
-#define __INPUT_INTERFACE_H
+#ifndef __INPUT_EVENT_H
+#define __INPUT_EVENT_H
 
-#include "Notifier.h"
-#include "types.h"
+#include "Event.h"
 
-class InputInterface : public Notifier
+class InputEvent : public Event
 {
 public:
-  InputInterface();
-  virtual ~InputInterface();
+  InputEvent(uint16_t event);
+  virtual ~InputEvent();
 
-  virtual dir_t getUserInput() = 0;
-  virtual dir_t waitForUserInput() = 0;
+  typedef enum Event_t
+  {
+    FAMILY_TYPE = 0x0100,
+    UNKNOWN_EVENT = FAMILY_TYPE + 0,
+    UP_KEY_PRESSED = FAMILY_TYPE + 1,
+    CENTER_KEY_PRESSED = FAMILY_TYPE + 2,
+    LEFT_KEY_PRESSED = FAMILY_TYPE + 3,
+    DOWN_KEY_PRESSED = FAMILY_TYPE + 4,
+    RIGHT_KEY_PRESSED = FAMILY_TYPE + 5,
+  } event_t;
 };
 
 #endif

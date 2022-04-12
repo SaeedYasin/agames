@@ -19,6 +19,7 @@
 
 #include "Game.h"
 #include <stdint.h>
+#include "Listener.h"
 #include "types.h"
 
 class DisplayInterface;
@@ -27,12 +28,13 @@ class InputInterface;
 class OsInterface;
 class Snake;
 
-class SnakeGame : public Game
+class SnakeGame : public Game, public Listener
 {
 public:
   SnakeGame(OsInterface *, DisplayInterface *, InputInterface *);
   virtual ~SnakeGame();
 
+  void eventOccurred(const Event *const event);
   bool loop(void);
 
 private:
@@ -42,10 +44,13 @@ private:
 
   Snake *m_snake;
   Egg *m_egg;
-  dir_t m_inputDir;
+  volatile dir_t m_inputDirection;
 
   void init(void);
   void cleanup(void);
+  void registerForInputEvents(void);
+  void unregisterForInputEvents(void);
+  dir_t waitForUserInput(void);
   void displayResult(uint8_t);
 };
 

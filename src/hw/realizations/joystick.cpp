@@ -16,16 +16,25 @@
 ********************************************************************/
 #include "Joystick.h"
 #include <Arduino.h>
+#include "InputEvent.h"
+#include "OsInterface.h"
 
-Joystick::Joystick(void)
+static OsInterface *g_os = NULL;
+static Joystick *g_js = NULL;
+static dir_t g_pressedKey = NONE;
+
+Joystick::Joystick(OsInterface *os)
 {
+  g_js = this;
+  g_os = os;
+
   pinMode(UP_PIN, INPUT);
   pinMode(CENTER_PIN, INPUT);
   pinMode(LEFT_PIN, INPUT);
   pinMode(DOWN_PIN, INPUT);
   pinMode(RIGHT_PIN, INPUT);
 
-  setTimer1Frequency(5);
+  setTimer1Frequency(20); // 20 Hz -> 50ms
 }
 
 Joystick::~Joystick(void)
@@ -47,10 +56,24 @@ void Joystick::setTimer1Frequency(uint8_t freq)
   sei(); // allow interrupts
 }
 
-byte test = 0;
 ISR(TIMER1_COMPA_vect)
 {
-  test = 1;
+  if (g_js != NULL)
+  {
+    dir_t key = g_js->getUserInput();
+
+    if (key == NONE)
+    {
+      g_pressedKey = key;
+      return;
+    }
+
+    if (g_pressedKey != key)
+    {
+      g_pressedKey = key;
+      g_js->generateInputEvent(key);
+    }
+  }
 }
 
 dir_t Joystick::scanIOs(void)
@@ -71,12 +94,42 @@ dir_t Joystick::scanIOs(void)
   return key;
 }
 
+void Joystick::generateInputEvent(dir_t key)
+{
+  Event *pEvent = NULL;
+
+  switch (key)
+  {
+  case UP:
+    pEvent = new InputEvent(InputEvent::UP_KEY_PRESSED);
+    break;
+  case CENTER:
+    pEvent = new InputEvent(InputEvent::CENTER_KEY_PRESSED);
+    break;
+  case LEFT:
+    pEvent = new InputEvent(InputEvent::LEFT_KEY_PRESSED);
+    break;
+  case DOWN:
+    pEvent = new InputEvent(InputEvent::DOWN_KEY_PRESSED);
+    break;
+  case RIGHT:
+    pEvent = new InputEvent(InputEvent::RIGHT_KEY_PRESSED);
+    break;
+  default:
+    g_os->log("Joystick: UnHandled key %d", (uint8_t)key);
+    break;
+  }
+
+  if (pEvent)
+  {
+    notifyListeners(pEvent);
+    delete pEvent;
+  }
+}
+
 dir_t Joystick::getUserInput(void)
 {
-  if (test == 1)
-    return scanIOs();
-  else
-    return NONE;
+  return scanIOs();
 }
 
 dir_t Joystick::waitForUserInput(void)

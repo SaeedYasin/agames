@@ -92,7 +92,7 @@ void ArduinoOs::handleLogTypeChange(void)
 {
   if (isEnabled(SERIAL_LOG_TYPE))
   {
-    Serial.begin(9600);
+    Serial.begin(115200);
     while (!Serial)
     {
     }

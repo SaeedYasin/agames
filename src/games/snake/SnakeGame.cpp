@@ -17,6 +17,7 @@
 #include "SnakeGame.h"
 #include "DisplayInterface.h"
 #include "Egg.h"
+#include "InputEvent.h"
 #include "InputInterface.h"
 #include "OsInterface.h"
 #include "Snake.h"
@@ -27,11 +28,53 @@ SnakeGame::SnakeGame(OsInterface *pOS, DisplayInterface *pDisp, InputInterface *
     : m_os(pOS), m_display(pDisp), m_input(pInput)
 {
   init();
+  registerForInputEvents();
 }
 
 SnakeGame::~SnakeGame(void)
 {
+  unregisterForInputEvents();
   cleanup();
+}
+
+void SnakeGame::registerForInputEvents(void)
+{
+  uint16_t inputEvents[] = {InputEvent::UP_KEY_PRESSED, InputEvent::LEFT_KEY_PRESSED,
+                            InputEvent::DOWN_KEY_PRESSED, InputEvent::RIGHT_KEY_PRESSED};
+  uint16_t totalEvents = sizeof(inputEvents) / sizeof(inputEvents[0]);
+  m_input->registerListener(this, inputEvents, totalEvents);
+}
+
+void SnakeGame::unregisterForInputEvents(void)
+{
+  uint16_t inputEvents[] = {InputEvent::UP_KEY_PRESSED, InputEvent::LEFT_KEY_PRESSED,
+                            InputEvent::DOWN_KEY_PRESSED, InputEvent::RIGHT_KEY_PRESSED};
+  uint16_t totalEvents = sizeof(inputEvents) / sizeof(inputEvents[0]);
+  m_input->unregisterListener(this, inputEvents, totalEvents);
+}
+
+void SnakeGame::eventOccurred(const Event *const event)
+{
+  uint16_t eventValue = event->getValue();
+
+  switch (eventValue)
+  {
+  case InputEvent::UP_KEY_PRESSED:
+    m_inputDirection = UP;
+    break;
+  case InputEvent::LEFT_KEY_PRESSED:
+    m_inputDirection = LEFT;
+    break;
+  case InputEvent::DOWN_KEY_PRESSED:
+    m_inputDirection = DOWN;
+    break;
+  case InputEvent::RIGHT_KEY_PRESSED:
+    m_inputDirection = RIGHT;
+    break;
+  default:
+    m_os->log("SnakeGame: unknown event received %d", eventValue);
+    break;
+  }
 }
 
 void SnakeGame::init(void)
@@ -39,7 +82,7 @@ void SnakeGame::init(void)
   m_display->clearScreen();
   m_snake = new Snake(m_display, m_os);
   m_egg = new Egg(m_display, m_snake, m_os);
-  m_inputDir = NONE;
+  m_inputDirection = RIGHT;
 }
 
 void SnakeGame::cleanup(void)
@@ -59,36 +102,26 @@ void SnakeGame::cleanup(void)
 
 bool SnakeGame::loop(void)
 {
-  if (m_inputDir == NONE || m_inputDir == CENTER || m_inputDir == m_snake->getDirection())
+  for (uint8_t s = 0; s < 50; s++)
   {
-    for (uint8_t s = 0; s < 25; s++)
-    {
-      m_os->delayMs(m_snake->getSpeed());
-      m_inputDir = m_input->getUserInput();
+    m_os->delayMs(m_snake->getSpeed());
 
-      if ((m_inputDir != NONE) && (m_inputDir != CENTER) && (m_inputDir != m_snake->getDirection()))
-        break;
-    }
+    // Break early if new input received
+    if (m_inputDirection != m_snake->getDirection())
+      break;
   }
 
-  // Check if user pressed any button
-  if (m_inputDir == NONE)
-    m_inputDir = m_input->getUserInput();
+  m_snake->setDirection(m_inputDirection);
 
-  // Check for valid input
-  if ((m_inputDir != NONE) && (m_inputDir != CENTER) && (m_inputDir != m_snake->getDirection()))
-  {
-    m_snake->setDirection(m_inputDir);
-    m_inputDir = NONE;
-  }
-
+  // Check if snake can move
   if ((m_snake->move()) == false)
   {
     uint8_t snakeLength = m_snake->getLength();
     cleanup();
     displayResult(snakeLength);
 
-    dir_t key = m_input->waitForUserInput();
+    dir_t key = waitForUserInput();
+    m_os->log("SnakeGame: waited for user input of %d", key);
 
     if (key != LEFT)
       init();
@@ -99,24 +132,25 @@ bool SnakeGame::loop(void)
   // Check if snake eats the egg
   if (m_egg->getPosition() == m_snake->getHeadPosition())
   {
-    m_os->log("Snake ate the egg at x=%d,y=%d", m_egg->getPosition().x, m_egg->getPosition().y);
+    Point eggPos = m_egg->getPosition();
+    m_os->log("SnakeGame: Snake ate the egg at x=%d,y=%d", eggPos.x, eggPos.y);
     (*m_snake)++;
     m_egg->move(m_snake);
   }
 
-  if (m_inputDir == NONE || m_inputDir == CENTER || m_inputDir == m_snake->getDirection())
-  {
-    for (uint8_t s = 0; s < 25; s++)
-    {
-      m_os->delayMs(m_snake->getSpeed());
-      m_inputDir = m_input->getUserInput();
+  return true;
+}
 
-      if ((m_inputDir != NONE) && (m_inputDir != CENTER) && (m_inputDir != m_snake->getDirection()))
-        break;
-    }
+dir_t SnakeGame::waitForUserInput(void)
+{
+  m_inputDirection = NONE;
+
+  while (m_inputDirection == NONE)
+  {
+    m_os->delayMs(50);
   }
 
-  return true;
+  return m_inputDirection;
 }
 
 void SnakeGame::displayResult(uint8_t length)

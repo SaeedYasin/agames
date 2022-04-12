@@ -21,6 +21,8 @@
 #include <stdint.h>
 #include "types.h"
 
+class OsInterface;
+
 #define UP_PIN 2
 #define CENTER_PIN 3
 #define LEFT_PIN 4
@@ -30,14 +32,16 @@
 class Joystick : public InputInterface
 {
 public:
-  Joystick();
+  Joystick(OsInterface *);
   virtual ~Joystick();
+
   dir_t getUserInput();
   dir_t waitForUserInput();
+  void generateInputEvent(dir_t);
 
 private:
-  dir_t scanIOs();
   void setTimer1Frequency(uint8_t);
+  dir_t scanIOs();
 };
 
 #endif

@@ -14,20 +14,23 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
 ********************************************************************/
-#ifndef __INPUT_INTERFACE_H
-#define __INPUT_INTERFACE_H
+#ifndef __EVENT_H
+#define __EVENT_H
 
-#include "Notifier.h"
-#include "types.h"
+#include <stdint.h>
 
-class InputInterface : public Notifier
+class Event
 {
 public:
-  InputInterface();
-  virtual ~InputInterface();
+  Event(uint16_t event);
+  virtual ~Event();
 
-  virtual dir_t getUserInput() = 0;
-  virtual dir_t waitForUserInput() = 0;
+  virtual uint8_t getFamily(void) const;
+  virtual uint8_t getType(void) const;
+  virtual uint16_t getValue(void) const;
+
+protected:
+  uint16_t m_event;
 };
 
 #endif

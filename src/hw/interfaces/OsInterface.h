@@ -19,6 +19,8 @@
 
 #include <stdint.h>
 
+#define NOP __asm__ __volatile__("nop\n\t")
+
 typedef enum LogType
 {
   NO_LOG_TYPE = 0x00,
